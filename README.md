@@ -28,10 +28,10 @@ Will be updated here, later: Project workflow / pipeline chart
 ![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/searches_UMLS_workflow.JPG "Search Terms to UMLS")
 
 ## Dependencies
-- Metamap JAVA API
+- Metamap JAVA API, https://metamap.nlm.nih.gov/JavaApi.shtml
 - Python Machine Learning Packages
   Pandas
-  K-Nearest Neighbor and Fuzzy Wuzzy to determine Machine Learning  
+  K-Nearest Neighbor and FuzzyWuzzy to determine Machine Learning  
   Matplot Lib
   Flask
   Dyango
