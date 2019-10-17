@@ -26,7 +26,7 @@ def send_static(path):
 
 def process_umls_job(input_filename, output_filename):
     args = ["java", "-jar", METAMAP_CLIENT_JAR, input_filename]
-    print(f"Running metamap job with arguments: {args}")
+    print("Running metamap job with arguments: {}".format(args))
     with open(output_filename, 'wb') as output_file:
         subprocess.run(args, shell=False, check=True, stdout=output_file)
 
@@ -71,8 +71,8 @@ def upload_file():
         filename = secure_filename(file.filename)
         file.save(temp.name)
         job_id = str(uuid.uuid4())
-        print(f"Input file: {temp.name}")
-        print(f"Job ID: {job_id}")
+        print("Input file: {}".format(temp.name))
+        print("Job ID: {}".format(job_id))
         process_umls_job(temp.name, os.path.join(JOB_OUTPUT_DIR, job_id))
         return redirect(url_for('done', job_id=job_id))
 
@@ -89,17 +89,17 @@ def done(job_id):
         if error.startswith('ERROR: '):
             error = error[len('ERROR: '):]
     if error:
-        return f"Error: {error}"
-    return f'''
+        return "Error: {}".format(error)
+    return '''
 	<!doctype html>
 	<title>Processing done</title>
-	<h1>Job {job_id} has been successfully processed</h1>
-	'''
+	<h1>Job {} has been successfully processed</h1>
+	'''.format(job_id)
 
 
 if __name__ == '__main__':
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
     # sess.init_app(app)
-    app.debug = True
+    app.debug = False
     app.run()

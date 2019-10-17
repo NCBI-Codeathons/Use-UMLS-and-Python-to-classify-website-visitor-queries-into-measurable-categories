@@ -13,6 +13,8 @@ done
 
 if ! test -d .ve; then
     virtualenv -p python3 .ve
+    . ./.ve/bin/activate
+    pip install flask gunicorn
 fi
 
 METAMAP_CLIENT_JAR="`pwd`/metamap_client.jar"
@@ -28,4 +30,5 @@ fi
 mkdir -p "$JOB_OUTPUT_DIR"
 
 . ./.ve/bin/activate
-python backend/backend.py
+#python backend/backend.py
+gunicorn -w 4 -b :8080 backend.backend:app
