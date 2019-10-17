@@ -23,6 +23,11 @@ Will be updated here, later: Project workflow / pipeline chart
 - We will have Excel files of fuzzy matched terms that are wrong. These can be edited using Excel.
 - More to follow
 
+## Workflow
+Inline-style: 
+![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/searches_UMLS_workflow.JPG "Search Terms to UMLS")
+
+
 ## Mapping search terms to the UMLS
 
 To take full advantage of the features offered by the UMLS it is important to base the search term to UMLS mappings on a knowledge engine that not only finds synonyms but also processes the text in a consistent manner to obtain the best relevant results.
