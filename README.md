@@ -8,10 +8,6 @@ Use case: A web analytist could say to a product owner, "Did you know that last 
 
 Site search represents the direct expression of our visitors’ intent. We could use this data to improve our staff’s awareness of what customers want from us. For example, we could (1) Cluster and analyze trends we know about. For multi-faceted topics that directly relate to our mission, we could create customized analyses using Python to collect the disparate keywords people might search for into a single “bucket.” Where can we create a better match between user interest and our content? Where might we improve our site structure and navigation? (2) Focus staff work onto new trends, as the trends emerge. When something new starts to happen that can be matched to our mission statement, we can start new content projects to address the emerging need in HTML pages, social media posts, etc. The eventual goal is to post a Python code package that other HHS web managers can use to classify their own search logs.
 
-## Past work
-
-https://github.com/NCBI-Hackathons/Semantic-search-log-analysis-pipeline
-
 ## Top objectives
 
 - Implementing MetaMap matching in a lightweight web interface.
@@ -54,3 +50,6 @@ Wenya Rowe NLM/NCBCI/CBB
 
 Rachit Bhatia NLM/OCCS/STB
 
+## Past work
+
+https://github.com/NCBI-Hackathons/Semantic-search-log-analysis-pipeline
