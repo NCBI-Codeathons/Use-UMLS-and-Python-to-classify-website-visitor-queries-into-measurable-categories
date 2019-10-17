@@ -1,4 +1,6 @@
 /SKR_Web_API_V2_3*
-/metamap_client.jar
+/metamap_worker.jar
 /.ve
+/job_input
 /job_output
+__pycache__

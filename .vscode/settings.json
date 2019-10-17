@@ -1,6 +1,8 @@
 {
 	"cSpell.words": [
-		"antd"
+		"UMLS",
+		"antd",
+		"metamap"
 	],
 	"python.terminal.activateEnvironment": true,
 	"python.pythonPath": "${workspaceFolder}/.ve/bin/python3"

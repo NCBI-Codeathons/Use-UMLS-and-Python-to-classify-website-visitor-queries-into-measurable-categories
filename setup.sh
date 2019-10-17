@@ -30,15 +30,15 @@ jar xf "$jar"
     done
 )
 
-echo 'Compiling metamap client...'
-javac metamap_client/MetaMapClient.java \
+echo 'Compiling metamap worker...'
+javac metamap_worker/MetaMapWorker.java \
     -d "$skr_ver/classes" \
     -cp "$skr_ver/classes"
 
-echo 'Creating metamap_client uber jar...'
+echo 'Creating metamap_worker uber jar...'
 
 (
     cd "$skr_ver/classes"
 
-    jar cfm ../../metamap_client.jar ../../metamap_client/manifest.txt .
+    jar cfm ../../metamap_worker.jar ../../metamap_worker/manifest.txt .
 )

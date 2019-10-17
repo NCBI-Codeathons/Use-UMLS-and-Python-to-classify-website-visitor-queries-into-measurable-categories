@@ -1,5 +1,6 @@
 from werkzeug.utils import secure_filename
-from flask import Flask, flash, request, redirect, url_for, send_from_directory
+from flask import (Flask, flash, request, redirect, url_for,
+                   send_from_directory, make_response)
 import subprocess
 import datetime
 import os
@@ -79,22 +80,22 @@ def upload_file():
 
 @app.route('/done/<job_id>', methods=['GET'])
 def done(job_id):
-    result = open(os.path.join(JOB_OUTPUT_DIR, job_id)).readlines()
-    if len(result) == 0:
+    result = open(os.path.join(JOB_OUTPUT_DIR, job_id)).read()
+    lines = result.split('\n')
+    if len(lines) == 0:
         error = "Job failed. Result is empty"
-    elif result[0].startswith('ERROR MESSAGE'):
-        error = result[0][len('ERROR MESSAGE'):]
+    elif lines[0].startswith('ERROR MESSAGE'):
+        error = lines[0][len('ERROR MESSAGE'):]
         if error.startswith(': '):
             error = error[2:]
         if error.startswith('ERROR: '):
             error = error[len('ERROR: '):]
     if error:
         return "Error: {}".format(error)
-    return '''
-	<!doctype html>
-	<title>Processing done</title>
-	<h1>Job {} has been successfully processed</h1>
-	'''.format(job_id)
+
+    response = make_response(result, 200)
+    response.mimetype = "text/plain"
+    return response
 
 
 if __name__ == '__main__':
