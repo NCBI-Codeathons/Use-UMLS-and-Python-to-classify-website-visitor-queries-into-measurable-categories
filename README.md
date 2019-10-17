@@ -46,10 +46,16 @@ Metamap is a program developed by Lister Hill Medical Center with the purpose of
 For the purposes of this codethon we used the top 100 user search terms. The search strings are submitted to Metamap through -edits here later depending on what we end up using- requesting the output in MetaMap Indexing (MMI) output. The output includes 
 
 ## Team/People
-Dan Wendling NLM/LO/PSD *same paragraph*.
+
+Dan Wendling NLM/LO/PSD
+
 Victor Cid NLM/LHC/CgSB
+
 Dmitry Revoe NLM/NCBI/MGB
+
 Laritza Rodriguez NLM/LHC/CSB
+
 Wenya Rowe NLM/NCBCI/CBB
+
 Rachit Bhatia NLM/OCCS/STB
 
