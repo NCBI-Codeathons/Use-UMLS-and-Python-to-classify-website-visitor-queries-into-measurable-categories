@@ -22,3 +22,12 @@ Will be updated here, later: Project workflow / pipeline chart
 - The code for working with the noSQL/Django manual-coding interface (feeding the training set) could be improved, and perhaps term predictions could be added to it.
 - We will have Excel files of fuzzy matched terms that are wrong. These can be edited using Excel.
 - More to follow
+
+## Mapping search terms to the UMLS
+
+To take full advantage of the features offered by the UMLS it is important to base the search term to UMLS mappings on a knowledge engine that not only finds synonyms but also processes the text in a consistent manner to obtain the best relevant results.
+
+Metamap is a program developed by Lister Hill Medical Center with the purpose of improving medical text retrieval. It is based on the use of linguistic techniques and built on a knowledge base engine that includes:  tokenization, sentence boundary determination, acronym/abbreviation identification, part of speach tagging, lexical lookup in the Specialist Lexicon, and syntactic analysis through shallow paring of phrases, and mapping of the terms to the UMLS. The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS prefered term, the Concept Unique Identifier (CUI) and the UMLS semantic types. 
+
+For the purposes of this codethon we used the top 100 user search terms. The search strings are submitted to Metamap through -edits here later depending on what we end up using- requesting the output in MetaMap Indexing (MMI) output. The output includes 
+
