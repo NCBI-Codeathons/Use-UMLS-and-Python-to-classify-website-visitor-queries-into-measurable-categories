@@ -24,7 +24,7 @@ Will be updated here, later: Project workflow / pipeline chart
 - More to follow
 
 ## Workflow
-Inline-style: 
+ 
 ![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/searches_UMLS_workflow.JPG "Search Terms to UMLS")
 
 ## Dependencies
@@ -36,6 +36,7 @@ Inline-style:
   Flask
   Dyango
   
+*More implementation advice: ![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/wiki "Implementation Documentation")
 
 ## Mapping search terms to the UMLS
 
@@ -43,7 +44,7 @@ To take full advantage of the features offered by the UMLS it is important to ba
 
 Metamap is a program developed by Lister Hill Medical Center with the purpose of improving medical text retrieval. It is based on the use of linguistic techniques and built on a knowledge base engine that includes:  tokenization, sentence boundary determination, acronym/abbreviation identification, part of speach tagging, lexical lookup in the Specialist Lexicon, and syntactic analysis through shallow paring of phrases, and mapping of the terms to the UMLS. The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS prefered term, the Concept Unique Identifier (CUI) and the UMLS semantic types. 
 
-For the purposes of this codethon we used the top 100 user search terms. The search strings are submitted to Metamap through -edits here later depending on what we end up using- requesting the output in MetaMap Indexing (MMI) output. The output includes 
+For the purposes of this codethon we used the top 100 user search terms. The search strings are submitted to Metamap through -edits here later depending on what we end up using- requesting the output in MetaMap Indexing (MMI) output. The output includes string identifyer, ranking score, UMLS preferred term, UMLS Concept Unique Identifier (CUI), Semantic Type List, Trigger Information (string, code and location used to identify the UMLS concept), Location (text offsets), MeSH treecode(s) when available.
 
 ## Team/People
 
