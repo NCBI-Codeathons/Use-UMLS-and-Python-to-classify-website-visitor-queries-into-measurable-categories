@@ -27,6 +27,15 @@ Will be updated here, later: Project workflow / pipeline chart
 Inline-style: 
 ![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/searches_UMLS_workflow.JPG "Search Terms to UMLS")
 
+## Dependencies
+- Metamap JAVA API
+- Python Machine Learning Packages
+  Pandas
+  K-Nearest Neighbor and Fuzzy Wuzzy to determine Machine Learning  
+  Matplot Lib
+  Flask
+  Dyango
+  
 
 ## Mapping search terms to the UMLS
 
@@ -35,4 +44,12 @@ To take full advantage of the features offered by the UMLS it is important to ba
 Metamap is a program developed by Lister Hill Medical Center with the purpose of improving medical text retrieval. It is based on the use of linguistic techniques and built on a knowledge base engine that includes:  tokenization, sentence boundary determination, acronym/abbreviation identification, part of speach tagging, lexical lookup in the Specialist Lexicon, and syntactic analysis through shallow paring of phrases, and mapping of the terms to the UMLS. The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS prefered term, the Concept Unique Identifier (CUI) and the UMLS semantic types. 
 
 For the purposes of this codethon we used the top 100 user search terms. The search strings are submitted to Metamap through -edits here later depending on what we end up using- requesting the output in MetaMap Indexing (MMI) output. The output includes 
+
+## Team/People
+Dan Wendling NLM/LO/PSD 
+Victor Cid NLM/LHC/CgSB
+Dmitry Revoe NLM/NCBI/MGB
+Laritza Rodriguez NLM/LHC/CSB
+Wenya Rowe NLM/NCBCI/CBB
+Rachit Bhatia NLM/OCCS
 
