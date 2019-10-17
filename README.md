@@ -8,10 +8,7 @@ Site search represents the direct expression of our visitors’ intent. We could
 
 ## Past work
 
-This was a project for the HHS CoLab data science bootcamp, then was an NCBI Hackathon project. NOTE: this is an old version of the code; new code will be posted here. https://github.com/NCBI-Hackathons/Semantic-search-log-analysis-pipeline
-
-Will be updated here, later: Project workflow / pipeline chart
-
+https://github.com/NCBI-Hackathons/Semantic-search-log-analysis-pipeline
 
 ## Top objectives
 
