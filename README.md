@@ -1,6 +1,8 @@
 # Use UMLS and Python to classify website visitor queries into measurable categories
 
-Activity logs for internal search (site search) of large web sites are often too verbose and inharmonious to analyze. The site www.nlm.nih.gov has around 100,000 visitor queries per month, with many variations on the same conceptual ideas. Combining log entries such as “ACA” and “Affordable Care Act” and “ObamaCare” across tens of thousands of rows, for example, is far too difficult for a human to do. An informal poll at the 2018 HHS Digital Community Day found that only two HHS web managers out of dozens, were looking for meaning in their search logs. This project uses an existing Python codebase and multiple techniques to classify search terms to the Unified Medical Language System (UMLS), with new work in tokenizing and vectorizing. We will explore how tools such as scikit-learn, TensorFlow, Keras, or PyTorch, might improve matching visitor input to the UMLS.
+Search log data for large web sites are often too verbose and inharmonious to analyze. The site www.nlm.nih.gov has around 100,000 visitor queries per month, with many variations on the same conceptual ideas. For this reason, many web managers are not looking for meaning in their search logs. This project uses Python with the UMLS MetaMap and other techniques to classify search terms to the Unified Medical Language System (UMLS). 
+
+Use case: A web analytist could say to a product owner, "Did you know that last month, 30 percent of our home page searches were about drugs? Should we take action on this?
 
 ## Why is this project applicable to others in the community?
 
