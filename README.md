@@ -12,13 +12,8 @@ https://github.com/NCBI-Hackathons/Semantic-search-log-analysis-pipeline
 
 ## Top objectives
 
-- Most important for future viability: Testing for the best category prediction using scikit-learn, TensorFlow, etc. tools., from existing sample data
-- Team members with UMLS login (free) can work with that API and vocabularies other than MeSH. Can do this Wednesday if needed, if there is interest
-- Creating tabular and visual outputs using Pandas, matplotlib/Seaborn/etc., Tableau: Search wiki for "Wireframing for the search log analysis project," for visual ideas. D3.js charts are also a possibility
-- Team members with access to Google Analytics and Google Search Console APIs can bring in content from those systems
-- The code for working with the noSQL/Django manual-coding interface (feeding the training set) could be improved, and perhaps term predictions could be added to it.
-- We will have Excel files of fuzzy matched terms that are wrong. These can be edited using Excel.
-- More to follow
+- Implementing MetaMap matching in a lightweight web interface.
+- Creating tabular and visual outputs using Pandas, matplotlib/Seaborn/etc. D3.js charts are also a possibility.
 
 ## Workflow
  
@@ -41,7 +36,7 @@ To take full advantage of the features offered by the UMLS it is important to ba
 
 Metamap is a program developed by Lister Hill Medical Center with the purpose of improving medical text retrieval. It is based on the use of linguistic techniques and built on a knowledge base engine that includes:  tokenization, sentence boundary determination, acronym/abbreviation identification, part of speach tagging, lexical lookup in the Specialist Lexicon, and syntactic analysis through shallow paring of phrases, and mapping of the terms to the UMLS. The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS prefered term, the Concept Unique Identifier (CUI) and the UMLS semantic types. 
 
-For the purposes of this codethon we used the top 100 user search terms. The search strings are submitted to Metamap through -edits here later depending on what we end up using- requesting the output in MetaMap Indexing (MMI) output. The output includes string identifyer, ranking score, UMLS preferred term, UMLS Concept Unique Identifier (CUI), Semantic Type List, Trigger Information (string, code and location used to identify the UMLS concept), Location (text offsets), MeSH treecode(s) when available.
+For the purposes of this codethon we used the top 100 user search terms for one week in October. The search strings are submitted to Metamap through -edits here later depending on what we end up using- requesting the output in MetaMap Indexing (MMI) output. The output includes string identifyer, ranking score, UMLS preferred term, UMLS Concept Unique Identifier (CUI), Semantic Type List, Trigger Information (string, code and location used to identify the UMLS concept), Location (text offsets), MeSH treecode(s) when available.
 
 ## Team/People
 
