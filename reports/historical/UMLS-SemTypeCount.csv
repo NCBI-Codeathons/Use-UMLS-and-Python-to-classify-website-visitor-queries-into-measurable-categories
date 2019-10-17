@@ -1,0 +1,294 @@
+SemanticType,Count
+Eukaryote,576742
+Bacterium,392347
+Plant,196160
+Fungus,142277
+Finding,140871
+Clinical Drug,116678
+Organic Chemical|Pharmacologic Substance,110321
+Organic Chemical,97787
+Gene or Genome,75926
+Disease or Syndrome,74063
+Clinical Attribute,70091
+"Amino Acid, Peptide, or Protein|Biologically Active Substance",55095
+Therapeutic or Preventive Procedure,54153
+Medical Device,48336
+"Body Part, Organ, or Organ Component",40575
+Fish,37834
+"Amino Acid, Peptide, or Protein|Enzyme",28918
+Bird,25847
+Virus,25396
+Molecular Function,25364
+Injury or Poisoning,25118
+Laboratory Procedure,23682
+Pharmacologic Substance,23145
+Neoplastic Process,21200
+"Amino Acid, Peptide, or Protein",19609
+Intellectual Product,19047
+Diagnostic Procedure,14738
+Mammal,13891
+Pathologic Function,13722
+Health Care Activity,13492
+"Amino Acid, Peptide, or Protein|Immunologic Factor",13265
+Body Location or Region,11121
+Cell Function,10962
+Quantitative Concept,10052
+Reptile,9803
+Amphibian,9151
+Sign or Symptom,8567
+Organic Chemical|Biologically Active Substance,8332
+"Amino Acid, Peptide, or Protein|Pharmacologic Substance",8137
+Laboratory or Test Result,7288
+Congenital Abnormality,7259
+Cell Component,7125
+Archaeon,6807
+Food,6713
+Body Space or Junction,5873
+"Nucleic Acid, Nucleoside, or Nucleotide",5800
+Mental or Behavioral Dysfunction,5555
+"Organic Chemical|Indicator, Reagent, or Diagnostic Aid",5536
+Professional or Occupational Group,5457
+Manufactured Object,5240
+Cell,5081
+Biomedical or Dental Material,4977
+"Indicator, Reagent, or Diagnostic Aid",4752
+Qualitative Concept,4562
+"Amino Acid, Peptide, or Protein|Receptor",4521
+Geographic Area,4460
+Spatial Concept,4428
+Functional Concept,4261
+Organic Chemical|Antibiotic,4204
+Organ or Tissue Function,4204
+Anatomical Abnormality,4135
+Immunologic Factor,4109
+Idea or Concept,3463
+Organic Chemical|Hazardous or Poisonous Substance,3438
+Temporal Concept,3434
+"Amino Acid, Peptide, or Protein|Pharmacologic Substance|Immunologic Factor",3319
+Organism Function,3097
+Cell or Molecular Dysfunction,3037
+Genetic Function,2877
+"Nucleic Acid, Nucleoside, or Nucleotide|Pharmacologic Substance",2826
+Acquired Abnormality,2765
+Tissue,2747
+"Nucleic Acid, Nucleoside, or Nucleotide|Biologically Active Substance",2719
+Inorganic Chemical,2654
+Population Group,2490
+Pharmacologic Substance|Inorganic Chemical,2355
+Embryonic Structure,2156
+Health Care Related Organization,2113
+Pharmacologic Substance|Immunologic Factor,2098
+Body Substance,1758
+Organic Chemical|Pharmacologic Substance|Vitamin,1738
+Physiologic Function,1698
+Classification,1616
+Biologically Active Substance,1567
+Mental Process,1477
+Organic Chemical|Pharmacologic Substance|Hormone,1468
+Substance,1356
+Research Activity,1338
+Educational Activity,1313
+Language,1230
+Biomedical Occupation or Discipline,1194
+Social Behavior,1151
+Organic Chemical|Biomedical or Dental Material,1088
+Individual Behavior,1045
+"Element, Ion, or Isotope",1032
+Drug Delivery Device,999
+Biologic Function,936
+Manufactured Object|Health Care Related Organization,892
+Pharmacologic Substance|Vitamin,868
+Pharmacologic Substance|Biologically Active Substance,864
+Organic Chemical|Pharmacologic Substance|Biologically Active Substance,859
+Occupational Activity,845
+Natural Phenomenon or Process,833
+Phenomenon or Process,821
+Conceptual Entity,790
+Daily or Recreational Activity,700
+"Indicator, Reagent, or Diagnostic Aid|Element, Ion, or Isotope",694
+"Amino Acid, Peptide, or Protein|Pharmacologic Substance|Hormone",694
+Organism Attribute,693
+Occupation or Discipline,678
+"Amino Acid, Peptide, or Protein|Pharmacologic Substance|Enzyme",663
+"Amino Acid, Peptide, or Protein|Antibiotic",639
+"Amino Acid, Peptide, or Protein|Indicator, Reagent, or Diagnostic Aid",624
+"Indicator, Reagent, or Diagnostic Aid|Inorganic Chemical",603
+"Amino Acid, Peptide, or Protein|Biologically Active Substance|Hazardous or Poisonous Substance",597
+"Amino Acid, Peptide, or Protein|Hazardous or Poisonous Substance",595
+"Amino Acid, Peptide, or Protein|Hormone",585
+Antibiotic,573
+Body System,562
+"Amino Acid, Peptide, or Protein|Pharmacologic Substance|Biologically Active Substance",551
+Governmental or Regulatory Activity,533
+Regulation or Law,491
+"Organic Chemical|Pharmacologic Substance|Indicator, Reagent, or Diagnostic Aid",419
+Organic Chemical|Hormone,419
+Activity,418
+Family Group,414
+Biomedical or Dental Material|Inorganic Chemical,394
+Human-caused Phenomenon or Process,366
+"Immunologic Factor|Indicator, Reagent, or Diagnostic Aid",365
+Organization,363
+Congenital Abnormality|Disease or Syndrome,361
+Nucleotide Sequence,334
+Organic Chemical|Pharmacologic Substance|Hazardous or Poisonous Substance,314
+Molecular Biology Research Technique,298
+Organic Chemical|Vitamin,289
+Patient or Disabled Group,288
+"Amino Acid, Peptide, or Protein|Enzyme|Receptor",283
+Hazardous or Poisonous Substance,271
+Hazardous or Poisonous Substance|Inorganic Chemical,271
+"Amino Acid, Peptide, or Protein|Immunologic Factor|Receptor",271
+Organic Chemical|Pharmacologic Substance|Immunologic Factor,254
+"Nucleic Acid, Nucleoside, or Nucleotide|Indicator, Reagent, or Diagnostic Aid",253
+Organic Chemical|Immunologic Factor,246
+Chemical Viewed Functionally,241
+Chemical Viewed Structurally,237
+"Pharmacologic Substance|Element, Ion, or Isotope",225
+Amino Acid Sequence,202
+Biologically Active Substance|Hazardous or Poisonous Substance,174
+Receptor,167
+Anatomical Structure,157
+Event,153
+Group Attribute,152
+Manufactured Object|Intellectual Product,150
+Organic Chemical|Biologically Active Substance|Hazardous or Poisonous Substance,149
+Hormone,149
+Organism,143
+Machine Activity,139
+Pharmacologic Substance|Hormone,138
+Age Group,136
+"Pharmacologic Substance|Indicator, Reagent, or Diagnostic Aid",136
+"Biologically Active Substance|Element, Ion, or Isotope",135
+Vitamin,134
+"Nucleic Acid, Nucleoside, or Nucleotide|Amino Acid, Peptide, or Protein",127
+"Amino Acid, Peptide, or Protein|Enzyme|Immunologic Factor",127
+"Hazardous or Poisonous Substance|Element, Ion, or Isotope",124
+Research Device,123
+Animal,121
+"Organic Chemical|Indicator, Reagent, or Diagnostic Aid|Hazardous or Poisonous Substance",103
+Experimental Model of Disease,103
+"Amino Acid, Peptide, or Protein|Immunologic Factor|Indicator, Reagent, or Diagnostic Aid",86
+"Pharmacologic Substance|Indicator, Reagent, or Diagnostic Aid|Inorganic Chemical",85
+"Pharmacologic Substance|Immunologic Factor|Indicator, Reagent, or Diagnostic Aid",84
+"Chemical Viewed Structurally|Indicator, Reagent, or Diagnostic Aid",77
+"Amino Acid, Peptide, or Protein|Enzyme|Hazardous or Poisonous Substance",75
+Behavior,72
+Environmental Effect of Humans,71
+Manufactured Object|Organization,67
+"Pharmacologic Substance|Biologically Active Substance|Element, Ion, or Isotope",66
+Diagnostic Procedure|Intellectual Product,63
+Self-help or Relief Organization,58
+"Amino Acid, Peptide, or Protein|Pharmacologic Substance|Immunologic Factor|Indicator, Reagent, or Diagnostic Aid",57
+Group,55
+Physical Object,50
+Organic Chemical|Chemical Viewed Functionally,49
+"Amino Acid, Peptide, or Protein|Biomedical or Dental Material",48
+Organic Chemical|Food,43
+"Nucleic Acid, Nucleoside, or Nucleotide|Amino Acid, Peptide, or Protein|Enzyme",42
+Professional Society,42
+Laboratory Procedure|Molecular Biology Research Technique,40
+Pharmacologic Substance|Hazardous or Poisonous Substance,40
+Research Activity|Intellectual Product,40
+"Nucleic Acid, Nucleoside, or Nucleotide|Antibiotic",39
+Quantitative Concept|Intellectual Product,38
+"Nucleic Acid, Nucleoside, or Nucleotide|Pharmacologic Substance|Biologically Active Substance",36
+"Amino Acid, Peptide, or Protein|Biologically Active Substance|Indicator, Reagent, or Diagnostic Aid",34
+Disease or Syndrome|Anatomical Abnormality,34
+Human,33
+Diagnostic Procedure|Research Activity,32
+Chemical Viewed Structurally|Biomedical or Dental Material,32
+"Nucleic Acid, Nucleoside, or Nucleotide|Pharmacologic Substance|Immunologic Factor",29
+"Amino Acid, Peptide, or Protein|Pharmacologic Substance|Hazardous or Poisonous Substance",28
+Biologically Active Substance|Inorganic Chemical,28
+"Amino Acid, Peptide, or Protein|Pharmacologic Substance|Indicator, Reagent, or Diagnostic Aid",27
+Chemical,27
+Entity,26
+Experimental Model of Disease|Neoplastic Process,26
+Pharmacologic Substance|Biologically Active Substance|Inorganic Chemical,24
+"Biologically Active Substance|Hazardous or Poisonous Substance|Element, Ion, or Isotope",24
+Vertebrate,23
+"Amino Acid, Peptide, or Protein|Enzyme|Indicator, Reagent, or Diagnostic Aid",23
+"Amino Acid, Peptide, or Protein|Pharmacologic Substance|Vitamin",23
+"Nucleic Acid, Nucleoside, or Nucleotide|Amino Acid, Peptide, or Protein|Pharmacologic Substance",23
+Governmental or Regulatory Activity|Intellectual Product,23
+"Pharmacologic Substance|Indicator, Reagent, or Diagnostic Aid|Element, Ion, or Isotope",21
+Organic Chemical|Biologically Active Substance|Antibiotic,21
+Biologically Active Substance|Antibiotic,20
+"Indicator, Reagent, or Diagnostic Aid|Hazardous or Poisonous Substance|Inorganic Chemical",20
+"Organic Chemical|Biologically Active Substance|Indicator, Reagent, or Diagnostic Aid",19
+"Amino Acid, Peptide, or Protein|Vitamin",19
+"Nucleic Acid, Nucleoside, or Nucleotide|Amino Acid, Peptide, or Protein|Biologically Active Substance",18
+Educational Activity|Intellectual Product,16
+Organic Chemical|Pharmacologic Substance|Food,16
+Pharmacologic Substance|Hazardous or Poisonous Substance|Inorganic Chemical,15
+Occupational Activity|Machine Activity,14
+"Organic Chemical|Indicator, Reagent, or Diagnostic Aid|Antibiotic",14
+Molecular Sequence,13
+"Organic Chemical|Hazardous or Poisonous Substance|Element, Ion, or Isotope",12
+"Amino Acid, Peptide, or Protein|Hormone|Indicator, Reagent, or Diagnostic Aid",11
+"Amino Acid, Peptide, or Protein|Immunologic Factor|Hazardous or Poisonous Substance",11
+Immunologic Factor|Receptor,10
+Cell|Pharmacologic Substance,10
+"Organic Chemical|Pharmacologic Substance|Element, Ion, or Isotope",10
+"Organic Chemical|Immunologic Factor|Indicator, Reagent, or Diagnostic Aid",9
+"Organic Chemical|Vitamin|Indicator, Reagent, or Diagnostic Aid",8
+"Nucleic Acid, Nucleoside, or Nucleotide|Amino Acid, Peptide, or Protein|Antibiotic",8
+"Amino Acid, Peptide, or Protein|Biologically Active Substance|Antibiotic",8
+"Nucleic Acid, Nucleoside, or Nucleotide|Immunologic Factor",8
+Chemical Viewed Structurally|Biologically Active Substance,7
+Fully Formed Anatomical Structure,7
+"Biomedical or Dental Material|Indicator, Reagent, or Diagnostic Aid",7
+"Organic Chemical|Biomedical or Dental Material|Indicator, Reagent, or Diagnostic Aid",7
+Enzyme,7
+Pharmacologic Substance|Immunologic Factor|Hazardous or Poisonous Substance,6
+"Nucleic Acid, Nucleoside, or Nucleotide|Biologically Active Substance|Indicator, Reagent, or Diagnostic Aid",6
+"Organic Chemical|Hormone|Indicator, Reagent, or Diagnostic Aid",6
+Chemical Viewed Structurally|Pharmacologic Substance,5
+"Pharmacologic Substance|Hazardous or Poisonous Substance|Element, Ion, or Isotope",5
+Environmental Effect of Humans|Hazardous or Poisonous Substance,5
+Organic Chemical|Receptor,5
+"Element, Ion, or Isotope|Inorganic Chemical",5
+Immunologic Factor|Hazardous or Poisonous Substance,5
+Organic Chemical|Immunologic Factor|Hazardous or Poisonous Substance,5
+"Indicator, Reagent, or Diagnostic Aid|Hazardous or Poisonous Substance|Element, Ion, or Isotope",5
+"Organic Chemical|Element, Ion, or Isotope",5
+Pharmacologic Substance|Biologically Active Substance|Hazardous or Poisonous Substance,4
+"Gene or Genome|Nucleic Acid, Nucleoside, or Nucleotide",4
+Human-caused Phenomenon or Process|Natural Phenomenon or Process,4
+Laboratory Procedure|Research Activity,4
+"Nucleic Acid, Nucleoside, or Nucleotide|Vitamin",4
+"Indicator, Reagent, or Diagnostic Aid|Antibiotic",4
+"Nucleic Acid, Nucleoside, or Nucleotide|Hazardous or Poisonous Substance",4
+Research Device|Intellectual Product,4
+Manufactured Object|Self-help or Relief Organization,3
+"Biologically Active Substance|Indicator, Reagent, or Diagnostic Aid|Element, Ion, or Isotope",3
+Manufactured Object|Hazardous or Poisonous Substance,3
+"Biologically Active Substance|Indicator, Reagent, or Diagnostic Aid",3
+Educational Activity|Machine Activity,3
+"Nucleic Acid, Nucleoside, or Nucleotide|Pharmacologic Substance|Vitamin",2
+"Pharmacologic Substance|Vitamin|Indicator, Reagent, or Diagnostic Aid",2
+"Pharmacologic Substance|Indicator, Reagent, or Diagnostic Aid|Hazardous or Poisonous Substance|Element, Ion, or Isotope",2
+Carbohydrate Sequence,2
+Organic Chemical|Immunologic Factor|Receptor,2
+Pharmacologic Substance|Food,2
+Pharmacologic Substance|Enzyme,2
+"Biomedical or Dental Material|Indicator, Reagent, or Diagnostic Aid|Inorganic Chemical",1
+"Nucleic Acid, Nucleoside, or Nucleotide|Pharmacologic Substance|Hazardous or Poisonous Substance",1
+"Amino Acid, Peptide, or Protein|Indicator, Reagent, or Diagnostic Aid|Hazardous or Poisonous Substance",1
+"Nucleic Acid, Nucleoside, or Nucleotide|Biologically Active Substance|Hazardous or Poisonous Substance",1
+"Nucleic Acid, Nucleoside, or Nucleotide|Biologically Active Substance|Antibiotic",1
+"Biologically Active Substance|Element, Ion, or Isotope|Inorganic Chemical",1
+Research Activity|Idea or Concept,1
+"Amino Acid, Peptide, or Protein|Indicator, Reagent, or Diagnostic Aid|Antibiotic",1
+"Indicator, Reagent, or Diagnostic Aid|Element, Ion, or Isotope|Inorganic Chemical",1
+"Pharmacologic Substance|Element, Ion, or Isotope|Inorganic Chemical",1
+"Nucleic Acid, Nucleoside, or Nucleotide|Amino Acid, Peptide, or Protein|Immunologic Factor",1
+"Indicator, Reagent, or Diagnostic Aid|Hazardous or Poisonous Substance",1
+Chemical Viewed Structurally|Chemical Viewed Functionally,1
+Bacterium|Eukaryote,1
+"Cell|Indicator, Reagent, or Diagnostic Aid",1
+"Organic Chemical|Indicator, Reagent, or Diagnostic Aid|Element, Ion, or Isotope",1
+"Hazardous or Poisonous Substance|Element, Ion, or Isotope|Inorganic Chemical",1
+"Nucleic Acid, Nucleoside, or Nucleotide|Pharmacologic Substance|Indicator, Reagent, or Diagnostic Aid",1
+"Amino Acid, Peptide, or Protein|Indicator, Reagent, or Diagnostic Aid|Inorganic Chemical",1
