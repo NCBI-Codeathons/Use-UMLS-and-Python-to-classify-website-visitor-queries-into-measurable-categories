@@ -36,7 +36,7 @@ Will be updated here, later: Project workflow / pipeline chart
   Flask
   Dyango
   
-More implementation advice: (https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/wiki "Implementation Documentation")
+More implementation advice: (https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/wiki)
 
 ## Mapping search terms to the UMLS
 
