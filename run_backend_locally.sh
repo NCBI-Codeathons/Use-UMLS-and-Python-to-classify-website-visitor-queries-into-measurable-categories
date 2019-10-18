@@ -13,9 +13,9 @@ done
 
 test -d .ve || virtualenv -p python3 .ve
 . ./.ve/bin/activate
-pip install flask gunicorn
+(cd backend && pip -q install -r requirements.txt)
 
-METAMAP_CLIENT_JAR="`pwd`/metamap_client.jar"
+METAMAP_CLIENT_JAR="`pwd`/metamap_worker/metamap_worker.jar"
 JOB_INPUT_DIR="`pwd`/job_input"
 JOB_OUTPUT_DIR="`pwd`/job_output"
 export METAMAP_CLIENT_JAR JOB_INPUT_DIR JOB_OUTPUT_DIR

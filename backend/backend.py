@@ -9,14 +9,14 @@ from flask import request
 import tempfile
 import uuid
 
-METAMAP_CLIENT_JAR = os.environ['METAMAP_CLIENT_JAR']
+JOB_INPUT_DIR = os.environ['JOB_INPUT_DIR']
 JOB_OUTPUT_DIR = os.environ['JOB_OUTPUT_DIR']
 
 
 # set the project root directory as the static folder, you can set others.
 app = Flask(__name__, static_url_path='')
 
-app.secret_key = b'secret secret'
+app.secret_key = b'e10b5bafe7c27293090b53b95126b839'
 
 
 @app.route('/<path:path>')
@@ -25,19 +25,7 @@ def send_static(path):
     return send_from_directory('umls-classifier/build', path)
 
 
-def process_umls_job(input_filename, output_filename):
-    args = ["java", "-jar", METAMAP_CLIENT_JAR, input_filename]
-    print("Running metamap job with arguments: {}".format(args))
-    with open(output_filename, 'wb') as output_file:
-        subprocess.run(args, shell=False, check=True, stdout=output_file)
-
-
 @app.route('/', methods=['GET'])
-def index():
-    return redirect(url_for('cgi'))
-
-
-@app.route('/cgi', methods=['GET'])
 def cgi():
     return '''
     <!doctype html>
@@ -68,20 +56,38 @@ def upload_file():
     if file.filename == '':
         flash('No selected file')
         return redirect(request.url)
-    with tempfile.NamedTemporaryFile() as temp:
-        filename = secure_filename(file.filename)
-        file.save(temp.name)
-        job_id = str(uuid.uuid4())
-        print("Input file: {}".format(temp.name))
-        print("Job ID: {}".format(job_id))
-        process_umls_job(temp.name, os.path.join(JOB_OUTPUT_DIR, job_id))
+    filename = secure_filename(file.filename)
+    job_id = str(uuid.uuid4())
+    print("Job ID: {}".format(job_id))
+    os.makedirs(JOB_INPUT_DIR, exist_ok=True)
+    input_pathname = os.path.join(JOB_INPUT_DIR, job_id)
+    print("Input file: {}".format(input_pathname))
+    file.save(input_pathname)
+    return redirect(url_for('check', job_id=job_id))
+
+
+@app.route('/check/<job_id>', methods=['GET'])
+def check(job_id):
+    if os.path.isfile(os.path.join(JOB_OUTPUT_DIR, job_id)):
         return redirect(url_for('done', job_id=job_id))
+
+    return ('''
+    <html>
+        <head>
+            <meta http-equiv="refresh" content="3;url=''' +
+                url_for('check', job_id=job_id) + '''" />
+        </head>
+        <body>
+            <h1>Running job {}...</h1>
+        </body>
+    </html>'''.format(job_id))
 
 
 @app.route('/done/<job_id>', methods=['GET'])
 def done(job_id):
     result = open(os.path.join(JOB_OUTPUT_DIR, job_id)).read()
     lines = result.split('\n')
+    error = None
     if len(lines) == 0:
         error = "Job failed. Result is empty"
     elif lines[0].startswith('ERROR MESSAGE'):

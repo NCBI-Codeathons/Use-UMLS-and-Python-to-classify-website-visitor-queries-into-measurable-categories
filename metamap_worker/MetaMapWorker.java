@@ -161,21 +161,14 @@ public class MetaMapWorker {
     }
   }
 
-  static void usage() {
-    System.err.println("Usage: java MetaMapWorker INPUT_DIR OUTPUT_DIR");
-    System.exit(-1);
-  }
-
   public static void main(String[] args) throws IOException {
-    // parse arguments
-    if (args.length != 2) {
-      usage();
-    }
+    Path inputDir = Paths.get(System.getenv("JOB_INPUT_DIR"));
+    Path outputDir = Paths.get(System.getenv("JOB_OUTPUT_DIR"));
 
-    // register directory and process its events
-    Path inputDir = Paths.get(args[0]);
-    Path outputDir = Paths.get(args[1]);
+    Files.createDirectories(inputDir);
+    Files.createDirectories(outputDir);
 
+    // register input directory and process its events
     new MetaMapWorker(inputDir).processJobs(outputDir);
   }
 }

@@ -40,5 +40,6 @@ echo 'Creating metamap_worker uber jar...'
 (
     cd "$skr_ver/classes"
 
-    jar cfm ../../metamap_worker.jar ../../metamap_worker/manifest.txt .
+    jar cfm ../../metamap_worker/metamap_worker.jar \
+        ../../metamap_worker/manifest.txt .
 )
