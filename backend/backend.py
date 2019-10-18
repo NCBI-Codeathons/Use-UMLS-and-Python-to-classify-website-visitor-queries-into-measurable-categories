@@ -54,7 +54,18 @@ def upload_file():
     os.makedirs(JOB_INPUT_DIR, exist_ok=True)
     input_pathname = os.path.join(JOB_INPUT_DIR, job_id)
     print("Input file: {}".format(input_pathname))
-    file.save(input_pathname)
+    file.save(input_pathname + ".tmp")
+    with open(input_pathname + ".tmp") as input_file:
+        with open(input_pathname + ".clean.tmp", 'wt') as output_file:
+            for line in input_file:
+                if line.startswith("Search Query"):
+                    continue
+                search_term = line.split(',', 1)[0]
+                search_term = search_term.encode('ascii', errors='ignore')
+                if search_term:
+                    print(search_term.decode('ascii'),
+                          file=output_file)
+    os.rename(input_pathname + ".clean.tmp", input_pathname)
     return redirect(url_for('check', job_id=job_id))
 
 
