@@ -18,6 +18,9 @@ Site search represents the direct expression of our visitors’ intent. We could
 ![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/searches_UMLS_workflow.JPG "Search Terms to UMLS")
 
 ## Dependencies
+- Processing tools:
+  List of abbreviations for Journals cited in Pubmed (https://www.nlm.nih.gov/bsd/serfile_addedinfo.html). File in 
+  Natural Language Processing Tool Kit through Python: delete punctuation, delete string that are numbers only, lower case,  limit to trigrams, 
 - Metamap JAVA API, https://metamap.nlm.nih.gov/JavaApi.shtml
 - Python Machine Learning Packages
   Pandas
