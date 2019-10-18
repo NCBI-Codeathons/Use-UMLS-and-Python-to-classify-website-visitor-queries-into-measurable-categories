@@ -44,6 +44,9 @@ The unmatched terms are processed with FuzzyUzzy to create containers, analyze t
 
 ## Processing and Output
 
+Search Strings input used for MetaMap and Fuzzyuzzy
+![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/wordcloud_search_strings.JPG "Search terms")
+
 Webservice input screen:
 ![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/webserver%20interfase.jpg "File Upload for Processing")
 
