@@ -15,7 +15,7 @@ Site search represents the direct expression of our visitors’ intent. We could
 
 ## Workflow
  
-![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/searches_UMLS_workflow.JPG "Search Terms to UMLS")
+![alt text]("Search Terms to UMLS")
 
 ## Dependencies
 ### Pre-Processing tools
