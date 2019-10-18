@@ -101,7 +101,7 @@ def img(job_id):
     rec_count = 0  # number of records read
     terms_count = 0  # number of UMLS terms found in the records
     # ST_string = ""
-    data_df = pd.DataFrame(columns=['query', 'UMLS_ST'])
+    data_df = pd.DataFrame(columns=['query', 'UMLS_ST', "UMLS_PT"])
     input_file = os.path.join(JOB_OUTPUT_DIR, job_id)
     with open(input_file) as fp:
         for line in fp:
@@ -110,13 +110,14 @@ def img(job_id):
             if len(elems) < 7:
                 continue
             query = elems[6]
+            pt = elems[3]
             ST_string = elems[5]
             ST_string = ST_string.replace("[", "")
             ST_string = ST_string.replace("]", "")
             ST_list = ST_string.split(",")
             for elem in ST_list:
                 terms_count += 1
-                data_df.loc[len(data_df)] = [query, elem]
+                data_df.loc[len(data_df)] = [query, elem, pt]
     print('Records read: {}'.format(rec_count))
     print('Terms found: {}'.format(terms_count))
 
@@ -137,36 +138,40 @@ def img(job_id):
     # Bar chart of all semantig group counts
     SGchart_file = data_basename + 'UMLS_SemGroup_counts.png'
 
-    data_df.head()
+    # data_df.head()
 
-    summary = data_df.groupby('UMLS_ST').count()
+    # summary = data_df.groupby('UMLS_PT').count()
 
-    summary.rename(columns={"query": "count"}, inplace=True)
+    # summary.rename(columns={"query": "count"}, inplace=True)
 
-    sum_sorted = summary.sort_values('count', ascending=False)
+    # sum_sorted = summary.sort_values('count', ascending=False)
 
-    sum_sorted.iloc[:10]
-
-    plt.style.use('ggplot')
+    # sum_sorted.iloc[:10]
 
     lookup_table = UMLS_SEMANTIC_TYPES_CSV
 
     mycolumns = ['index', 'TUI', 'abbr', 'name']
     maptable_df = pd.read_csv(lookup_table, index_col=0, names=mycolumns)
 
-    for index, row in sum_sorted.iterrows():
-        # print(index, row[0])
-        sum_sorted.loc[index, 'name'] = maptable_df.loc[index, 'name']
+    # for index, row in sum_sorted.iterrows():
+    # print(index, row[0])
+    # sum_sorted.loc[index, 'name'] = maptable_df.loc[index, 'name']
 
-    top_n = 16   # change this to the number you need
+    PT_sum = data_df.groupby("UMLS_PT").count()
+    PT_sum.drop(["query"], axis=1, inplace=True)
+    PT_sum.rename(columns={"UMLS_ST": "count"}, inplace=True)
 
+    PT_sum = PT_sum.sort_values('count', ascending=False)
+
+    top_n = 30   # change this to the number you need
+
+    plt.style.use('ggplot')
     fig, ax = plt.subplots(figsize=(7, 12))
-    sum_sorted.iloc[:top_n].plot(
-        kind='barh', x='name', y='count', legend=False, ax=ax)
+    PT_sum.iloc[:top_n].plot(kind='barh', legend=False, ax=ax)
     ax.set_xlabel('Count')
-    ax.set_ylabel('UMLS Semantic Type')
+    ax.set_ylabel('UMLS Preferred Term')
     ax.invert_yaxis()
-    ax.set(title='UMLS Semantic Types represented in search queries\n')
+    ax.set(title='UMLS Preferred Terms represented in search queries\n')
 
     print("Saving chart to {}".format(STchart_file))
     fig.savefig(STchart_file, bbox_inches='tight')
