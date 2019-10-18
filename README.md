@@ -40,6 +40,8 @@ Metamap is a program developed by Lister Hill Medical Center with the purpose of
 
 For the purposes of this codethon we used the top 100 user search terms for one week in October. The search strings are submitted to Metamap through -edits here later depending on what we end up using- requesting the output in MetaMap Indexing (MMI) output. The output includes string identifyer, ranking score, UMLS preferred term, UMLS Concept Unique Identifier (CUI), Semantic Type List, Trigger Information (string, code and location used to identify the UMLS concept), Location (text offsets), MeSH treecode(s) when available.
 
+The unmatched terms are processed with FuzzyUzzy to create containers, analyze trends and re-process to find additional matches.
+
 ## Team/People
 
 Dan Wendling NLM/LO/PSD
