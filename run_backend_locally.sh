@@ -28,7 +28,7 @@ export METAMAP_CLIENT_JAR \
 
 if ! test -f "$METAMAP_CLIENT_JAR"; then
     echo "$METAMAP_CLIENT_JAR does not exist" >&2
-    echo 'Please run setup.sh' >&2
+    echo 'Please run build.sh' >&2
     exit 2
 fi
 
