@@ -1,0 +1,78 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: backend
+  ports:
+  - port: 8080
+    protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      volumes:
+      - name: scratch
+        emptyDir: {}
+      containers:
+      - name: backend
+        image: backend-image:latest
+        imagePullPolicy: Never
+        resources:
+          limits:
+            cpu: 1500m
+            memory: 1024Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        volumeMounts:
+        - name: scratch
+          mountPath: /mnt
+        env:
+        - name: JOB_INPUT_DIR
+          value: /mnt/job_input
+        - name: JOB_OUTPUT_DIR
+          value: /mnt/job_output
+        ports:
+        - containerPort: 8080
+      - name: worker
+        image: worker-image:latest
+        imagePullPolicy: Never
+        resources:
+          limits:
+            cpu: 1500m
+            memory: 1024Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        volumeMounts:
+        - name: scratch
+          mountPath: /mnt
+        env:
+        - name: JOB_INPUT_DIR
+          value: /mnt/job_input
+        - name: JOB_OUTPUT_DIR
+          value: /mnt/job_output
+        - name: UMLS_EMAIL
+          value: {{.Values.umlsEmail}}
+        - name: UMLS_USERNAME
+          value: {{.Values.umlsUsername}}
+        - name: UMLS_PASSWORD
+          value: {{.Values.umlsPassword}}
+        ports:
+        - containerPort: 8080

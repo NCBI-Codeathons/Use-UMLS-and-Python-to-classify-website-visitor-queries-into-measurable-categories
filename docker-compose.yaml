@@ -1,0 +1,28 @@
+version: '2.0'
+
+services:
+
+  backend:
+    image: backend-image
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - worker
+
+  worker:
+    image: worker-image
+    build:
+      context: ./metamap_worker
+      dockerfile: Dockerfile
+
+  #frontend:
+  #  build:
+  #    context: ./frontend
+  #    dockerfile: Dockerfile
+  #  ports:
+  #    - 8080:8080
+  #  depends_on:
+  #    - backend
