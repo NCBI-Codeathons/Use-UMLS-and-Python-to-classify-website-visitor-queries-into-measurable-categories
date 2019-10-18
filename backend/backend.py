@@ -39,8 +39,7 @@ def cgi():
       <input type="file" name="file">
       <input
         type="submit"
-        value="Upload"
-        onClick="this.disabled=true; this.value='Processing...';">
+        value="Upload">
     </form>
     '''
 
