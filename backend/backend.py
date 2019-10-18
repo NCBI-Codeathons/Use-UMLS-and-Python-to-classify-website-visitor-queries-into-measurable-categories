@@ -15,36 +15,25 @@ import matplotlib.pyplot as plt
 JOB_INPUT_DIR = os.environ['JOB_INPUT_DIR']
 JOB_OUTPUT_DIR = os.environ['JOB_OUTPUT_DIR']
 UMLS_SEMANTIC_TYPES_CSV = os.environ['UMLS_SEMANTIC_TYPES_CSV']
+STATIC_CONTENT_DIR = os.environ['STATIC_CONTENT_DIR']
 
 # set the project root directory as the static folder, you can set others.
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__, static_url_path='',
+            static_folder=STATIC_CONTENT_DIR)
 
 app.secret_key = b'e10b5bafe7c27293090b53b95126b839'
 
 
-@app.route('/<path:path>')
-def send_static(path):
-    print("Serving static")
-    return send_from_directory('umls-classifier/build', path)
+# @app.route('/<path:path>')
+# def send_static(path):
+#     print("Serving static")
+#     return send_from_directory('umls-classifier/build', path)
 
 
 @app.route('/', methods=['GET'])
 def cgi():
-    return '''
-    <!doctype html>
-    <title>Upload Log File</title>
-    <h1>Upload Google Analytics Log File</h1>
-    <p>Please upload a Google Analytics log file in CSV format.
-    <form
-        action="''' + url_for("upload_file") + '''"
-        method="post"
-        enctype="multipart/form-data">
-      <input type="file" name="file">
-      <input
-        type="submit"
-        value="Upload">
-    </form>
-    '''
+    return send_file(os.path.join(STATIC_CONTENT_DIR, 'index.html'),
+                     mimetype='text/html')
 
 
 @app.route('/upload', methods=['POST'])
@@ -173,7 +162,7 @@ def img(job_id):
     maptable_df = pd.read_csv(lookup_table, index_col=0, names=mycolumns)
 
     for index, row in sum_sorted.iterrows():
-        #print(index, row[0])
+        # print(index, row[0])
         sum_sorted.loc[index, 'name'] = maptable_df.loc[index, 'name']
 
     top_n = 16   # change this to the number you need

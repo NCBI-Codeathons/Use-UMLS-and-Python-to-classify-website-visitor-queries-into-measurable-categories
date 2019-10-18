@@ -19,7 +19,12 @@ METAMAP_CLIENT_JAR="`pwd`/metamap_worker/metamap_worker.jar"
 JOB_INPUT_DIR="`pwd`/job_input"
 JOB_OUTPUT_DIR="`pwd`/job_output"
 UMLS_SEMANTIC_TYPES_CSV="`pwd`/data/umls_semantic_types.csv"
-export METAMAP_CLIENT_JAR JOB_INPUT_DIR JOB_OUTPUT_DIR UMLS_SEMANTIC_TYPES_CSV
+STATIC_CONTENT_DIR="`pwd`/html"
+export METAMAP_CLIENT_JAR \
+    JOB_INPUT_DIR \
+    JOB_OUTPUT_DIR \
+    UMLS_SEMANTIC_TYPES_CSV \
+    STATIC_CONTENT_DIR
 
 if ! test -f "$METAMAP_CLIENT_JAR"; then
     echo "$METAMAP_CLIENT_JAR does not exist" >&2
