@@ -42,6 +42,10 @@ For the purposes of this codethon we used the top 100 user search terms for one 
 
 The unmatched terms are processed with FuzzyUzzy to create containers, analyze trends and re-process to find additional matches.
 
+## References
+
+[An overview of MetaMap](https://ii.nlm.nih.gov/Publications/Papers/JAMIA.2010.17.Aronson.pdf)
+
 ## Team/People
 
 Dan Wendling NLM/LO/PSD
