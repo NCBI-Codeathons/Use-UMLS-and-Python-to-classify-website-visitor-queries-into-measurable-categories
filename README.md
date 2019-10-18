@@ -25,10 +25,10 @@ Site search represents the direct expression of our visitors’ intent. We could
 - Metamap JAVA API, https://metamap.nlm.nih.gov/JavaApi.shtml
 - Python Machine Learning Packages
   Pandas
-  K-Nearest Neighbor and FuzzyWuzzy to determine Machine Learning  
+  K-Nearest Neighbor and Fuzzyuzzy to determine Machine Learning  
   Matplot Lib
   Flask
-  Dyango
+  Django
   
 More implementation advice: (https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/wiki)
 
