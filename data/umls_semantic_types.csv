@@ -1,0 +1,127 @@
+aapp,T116,aapp,"Amino Acid, Peptide, or Protein"
+acab,T020,acab,Acquired Abnormality
+acty,T052,acty,Activity
+aggp,T100,aggp,Age Group
+amas,T087,amas,Amino Acid Sequence
+amph,T011,amph,Amphibian
+anab,T190,anab,Anatomical Abnormality
+anim,T008,anim,Animal
+anst,T017,anst,Anatomical Structure
+antb,T195,antb,Antibiotic
+arch,T194,arch,Archaeon
+bacs,T123,bacs,Biologically Active Substance
+bact,T007,bact,Bacterium
+bdsu,T031,bdsu,Body Substance
+bdsy,T022,bdsy,Body System
+bhvr,T053,bhvr,Behavior
+biof,T038,biof,Biologic Function
+bird,T012,bird,Bird
+blor,T029,blor,Body Location or Region
+bmod,T091,bmod,Biomedical Occupation or Discipline
+bodm,T122,bodm,Biomedical or Dental Material
+bpoc,T023,bpoc,"Body Part, Organ, or Organ Component"
+bsoj,T030,bsoj,Body Space or Junction
+celc,T026,celc,Cell Component
+celf,T043,celf,Cell Function
+cell,T025,cell,Cell
+cgab,T019,cgab,Congenital Abnormality
+chem,T103,chem,Chemical
+chvf,T120,chvf,Chemical Viewed Functionally
+chvs,T104,chvs,Chemical Viewed Structurally
+clas,T185,clas,Classification
+clna,T201,clna,Clinical Attribute
+clnd,T200,clnd,Clinical Drug
+cnce,T077,cnce,Conceptual Entity
+comd,T049,comd,Cell or Molecular Dysfunction
+crbs,T088,crbs,Carbohydrate Sequence
+diap,T060,diap,Diagnostic Procedure
+dora,T056,dora,Daily or Recreational Activity
+drdd,T203,drdd,Drug Delivery Device
+dsyn,T047,dsyn,Disease or Syndrome
+edac,T065,edac,Educational Activity
+eehu,T069,eehu,Environmental Effect of Humans
+elii,T196,elii,"Element, Ion, or Isotope"
+emod,T050,emod,Experimental Model of Disease
+emst,T018,emst,Embryonic Structure
+enty,T071,enty,Entity
+enzy,T126,enzy,Enzyme
+euka,T204,euka,Eukaryote
+evnt,T051,evnt,Event
+famg,T099,famg,Family Group
+ffas,T021,ffas,Fully Formed Anatomical Structure
+fish,T013,fish,Fish
+fndg,T033,fndg,Finding
+fngs,T004,fngs,Fungus
+food,T168,food,Food
+ftcn,T169,ftcn,Functional Concept
+genf,T045,genf,Genetic Function
+geoa,T083,geoa,Geographic Area
+gngm,T028,gngm,Gene or Genome
+gora,T064,gora,Governmental or Regulatory Activity
+grpa,T102,grpa,Group Attribute
+grup,T096,grup,Group
+hcpp,T068,hcpp,Human-caused Phenomenon or Process
+hcro,T093,hcro,Health Care Related Organization
+hlca,T058,hlca,Health Care Activity
+hops,T131,hops,Hazardous or Poisonous Substance
+horm,T125,horm,Hormone
+humn,T016,humn,Human
+idcn,T078,idcn,Idea or Concept
+imft,T129,imft,Immunologic Factor
+inbe,T055,inbe,Individual Behavior
+inch,T197,inch,Inorganic Chemical
+inpo,T037,inpo,Injury or Poisoning
+inpr,T170,inpr,Intellectual Product
+irda,T130,irda,"Indicator, Reagent, or Diagnostic Aid"
+lang,T171,lang,Language
+lbpr,T059,lbpr,Laboratory Procedure
+lbtr,T034,lbtr,Laboratory or Test Result
+mamm,T015,mamm,Mammal
+mbrt,T063,mbrt,Molecular Biology Research Technique
+mcha,T066,mcha,Machine Activity
+medd,T074,medd,Medical Device
+menp,T041,menp,Mental Process
+mnob,T073,mnob,Manufactured Object
+mobd,T048,mobd,Mental or Behavioral Dysfunction
+moft,T044,moft,Molecular Function
+mosq,T085,mosq,Molecular Sequence
+neop,T191,neop,Neoplastic Process
+nnon,T114,nnon,"Nucleic Acid, Nucleoside, or Nucleotide"
+npop,T070,npop,Natural Phenomenon or Process
+nusq,T086,nusq,Nucleotide Sequence
+ocac,T057,ocac,Occupational Activity
+ocdi,T090,ocdi,Occupation or Discipline
+orch,T109,orch,Organic Chemical
+orga,T032,orga,Organism Attribute
+orgf,T040,orgf,Organism Function
+orgm,T001,orgm,Organism
+orgt,T092,orgt,Organization
+ortf,T042,ortf,Organ or Tissue Function
+patf,T046,patf,Pathologic Function
+phob,T072,phob,Physical Object
+phpr,T067,phpr,Phenomenon or Process
+phsf,T039,phsf,Physiologic Function
+phsu,T121,phsu,Pharmacologic Substance
+plnt,T002,plnt,Plant
+podg,T101,podg,Patient or Disabled Group
+popg,T098,popg,Population Group
+prog,T097,prog,Professional or Occupational Group
+pros,T094,pros,Professional Society
+qlco,T080,qlco,Qualitative Concept
+qnco,T081,qnco,Quantitative Concept
+rcpt,T192,rcpt,Receptor
+rept,T014,rept,Reptile
+resa,T062,resa,Research Activity
+resd,T075,resd,Research Device
+rnlw,T089,rnlw,Regulation or Law
+sbst,T167,sbst,Substance
+shro,T095,shro,Self-help or Relief Organization
+socb,T054,socb,Social Behavior
+sosy,T184,sosy,Sign or Symptom
+spco,T082,spco,Spatial Concept
+tisu,T024,tisu,Tissue
+tmco,T079,tmco,Temporal Concept
+topp,T061,topp,Therapeutic or Preventive Procedure
+virs,T005,virs,Virus
+vita,T127,vita,Vitamin
+vtbt,T010,vtbt,Vertebrate

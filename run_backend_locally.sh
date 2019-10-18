@@ -18,7 +18,8 @@ test -d .ve || virtualenv -p python3 .ve
 METAMAP_CLIENT_JAR="`pwd`/metamap_worker/metamap_worker.jar"
 JOB_INPUT_DIR="`pwd`/job_input"
 JOB_OUTPUT_DIR="`pwd`/job_output"
-export METAMAP_CLIENT_JAR JOB_INPUT_DIR JOB_OUTPUT_DIR
+UMLS_SEMANTIC_TYPES_CSV="`pwd`/data/umls_semantic_types.csv"
+export METAMAP_CLIENT_JAR JOB_INPUT_DIR JOB_OUTPUT_DIR UMLS_SEMANTIC_TYPES_CSV
 
 if ! test -f "$METAMAP_CLIENT_JAR"; then
     echo "$METAMAP_CLIENT_JAR does not exist" >&2

@@ -1,6 +1,6 @@
 from werkzeug.utils import secure_filename
 from flask import (Flask, flash, request, redirect, url_for,
-                   send_from_directory, make_response)
+                   send_from_directory, send_file, make_response)
 import subprocess
 import datetime
 import os
@@ -8,10 +8,13 @@ from flask import Flask
 from flask import request
 import tempfile
 import uuid
+import pandas as pd
+import matplotlib.pyplot as plt
+
 
 JOB_INPUT_DIR = os.environ['JOB_INPUT_DIR']
 JOB_OUTPUT_DIR = os.environ['JOB_OUTPUT_DIR']
-
+UMLS_SEMANTIC_TYPES_CSV = os.environ['UMLS_SEMANTIC_TYPES_CSV']
 
 # set the project root directory as the static folder, you can set others.
 app = Flask(__name__, static_url_path='')
@@ -74,7 +77,7 @@ def check(job_id):
     <html>
         <head>
             <meta http-equiv="refresh" content="3;url=''' +
-                url_for('check', job_id=job_id) + '''" />
+            url_for('check', job_id=job_id) + '''" />
         </head>
         <body>
             <h1>Running job {}...</h1>
@@ -98,14 +101,100 @@ def done(job_id):
     if error:
         return "Error: {}".format(error)
 
-    response = make_response(result, 200)
-    response.mimetype = "text/plain"
-    return response
+    return ('''
+    <html>
+        <head>
+            <title>Job results</title>
+        </head>
+        <body>
+            <h1>Results for {}...</h1>
+            <img width="800" src="'''.format(job_id) +
+            url_for('img', job_id=job_id) + '''" />
+        </body>
+    </html>''')
+
+
+@app.route('/img/<job_id>', methods=['GET'])
+def img(job_id):
+    rec_count = 0  # number of records read
+    terms_count = 0  # number of UMLS terms found in the records
+    # ST_string = ""
+    data_df = pd.DataFrame(columns=['query', 'UMLS_ST'])
+    input_file = os.path.join(JOB_OUTPUT_DIR, job_id)
+    with open(input_file) as fp:
+        for line in fp:
+            rec_count += 1
+            elems = line.rstrip().split('|')
+            if len(elems) < 7:
+                continue
+            query = elems[6]
+            ST_string = elems[5]
+            ST_string = ST_string.replace("[", "")
+            ST_string = ST_string.replace("]", "")
+            ST_list = ST_string.split(",")
+            for elem in ST_list:
+                terms_count += 1
+                data_df.loc[len(data_df)] = [query, elem]
+    print('Records read: {}'.format(rec_count))
+    print('Terms found: {}'.format(terms_count))
+
+    data_basename = os.path.join(JOB_OUTPUT_DIR, job_id + '-')
+    # Semantic types counts
+    SToutput_file = data_basename + 'semantic_type_counts_output.txt'
+    # Semantic groups counts
+    SGoutput_file = data_basename + 'semantic_group_counts_output.txt'
+
+    # Bar chart with all Semantic Types counts (ST abbreviations)
+    STchart_abbr_file = data_basename + 'UMLS_SemType_abbr_Counts.png'
+    # Bar chart with Top 'N' Semantic Types counts (ST abbreviations)
+    STchart_TopN_abbr_file = data_basename + 'UMLS_SemType_TopN_abbr_Counts.png'
+    # Bar chart with all Semantic Types counts (full ST names)
+    STchart_file = data_basename + 'UMLS_SemType_Counts.png'
+    # Bar chart with Top 'N' Semantic Types counts (full ST names)
+    STchart_TopN_file = data_basename + 'UMLS_SemType_TopN_Counts.png'
+    # Bar chart of all semantig group counts
+    SGchart_file = data_basename + 'UMLS_SemGroup_counts.png'
+
+    data_df.head()
+
+    summary = data_df.groupby('UMLS_ST').count()
+
+    summary.rename(columns={"query": "count"}, inplace=True)
+
+    sum_sorted = summary.sort_values('count', ascending=False)
+
+    sum_sorted.iloc[:10]
+
+    plt.style.use('ggplot')
+
+    lookup_table = UMLS_SEMANTIC_TYPES_CSV
+
+    mycolumns = ['index', 'TUI', 'abbr', 'name']
+    maptable_df = pd.read_csv(lookup_table, index_col=0, names=mycolumns)
+
+    for index, row in sum_sorted.iterrows():
+        #print(index, row[0])
+        sum_sorted.loc[index, 'name'] = maptable_df.loc[index, 'name']
+
+    top_n = 16   # change this to the number you need
+
+    fig, ax = plt.subplots(figsize=(7, 12))
+    sum_sorted.iloc[:top_n].plot(
+        kind='barh', x='name', y='count', legend=False, ax=ax)
+    ax.set_xlabel('Count')
+    ax.set_ylabel('UMLS Semantic Type')
+    ax.invert_yaxis()
+    ax.set(title='UMLS Semantic Types represented in search queries\n')
+
+    print("Saving chart to {}".format(STchart_file))
+    fig.savefig(STchart_file, bbox_inches='tight')
+
+    return send_file(STchart_file, mimetype='image/png')
 
 
 if __name__ == '__main__':
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
     # sess.init_app(app)
-    app.debug = False
+    app.debug = True
     app.run()
