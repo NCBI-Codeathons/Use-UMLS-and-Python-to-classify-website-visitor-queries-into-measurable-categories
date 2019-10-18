@@ -7,8 +7,9 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>USWDS Fractal example document</title>
-  <link rel="stylesheet" href="uswds-2.2.1/css/uswds.min.css">
+  <title>Use UMLS to classify website visitor queries</title>
+  <link rel="stylesheet" href="/uswds-2.2.1/css/uswds.min.css">
+  {% block head %}{% endblock %}
 </head>
 
 <body>
@@ -19,7 +20,7 @@
         <div class="usa-banner__inner">
           <div class="grid-col-auto">
             <img class="usa-banner__header-flag"
-              src="uswds-2.2.1/img/us_flag_small.png" alt="U.S. flag">
+              src="/uswds-2.2.1/img/us_flag_small.png" alt="U.S. flag">
           </div>
           <div class="grid-col-fill tablet:grid-col-auto">
             <p class="usa-banner__header-text">An official website of the United
@@ -38,7 +39,7 @@
         <div class="grid-row grid-gap-lg">
           <div class="usa-banner__guidance tablet:grid-col-6">
             <img class="usa-banner__icon usa-media-block__img"
-              src="uswds-2.2.1/img/icon-dot-gov.svg" alt="Dot gov">
+              src="/uswds-2.2.1/img/icon-dot-gov.svg" alt="Dot gov">
             <div class="usa-media-block__body">
               <p>
                 <strong>The .gov means it’s official.</strong>
@@ -49,7 +50,7 @@
           </div>
           <div class="usa-banner__guidance tablet:grid-col-6">
             <img class="usa-banner__icon usa-media-block__img"
-              src="uswds-2.2.1/img/icon-https.svg" alt="Https">
+              src="/uswds-2.2.1/img/icon-https.svg" alt="Https">
             <div class="usa-media-block__body">
               <p>
                 <strong>The site is secure.</strong>
@@ -68,13 +69,13 @@
       <div class="usa-navbar">
         <div class="usa-logo" id="basic-mega-logo">
           <em class="usa-logo__text"><a
-              href="https://federalist-proxy.app.cloud.gov/" title="Home"
-              aria-label="Home">Semantic Search Analysis</a></em>
+              href="{{url_for('index')}}" title="Home"
+              aria-label="Home">UMLS MetaMap Classifier</a></em>
         </div>
         <button class="usa-menu-btn">Menu</button>
       </div>
       <nav aria-label="Primary navigation" class="usa-nav">
-        <button class="usa-nav__close"><img src="uswds-2.2.1/img/close.svg"
+        <button class="usa-nav__close"><img src="/uswds-2.2.1/img/close.svg"
             alt="close"></button>
         <!--<ul class="usa-nav__primary usa-accordion"><li class="usa-nav__primary-item">
     <button class="usa-accordion__button usa-nav__link  usa-current" aria-expanded="false" aria-controls="basic-mega-nav-section-one"><span>Current section</span></button>
@@ -180,20 +181,7 @@
           </nav>
         </aside>
         <div class="usa-layout-docs__main desktop:grid-col-9 usa-prose">
-          <h1>Process your file with UMLS MetaMap</h1>
-          <ol>
-            <li>Export from Google Analytics profile NLM Main - Master
-              Production, Acquisition &gt; Search Console &gt; Queries. </li>
-            <li>Set the time period, such as the last 30 days.</li>
-            <li>Select Export &gt; CSV.</li>
-          </ol>
-          <h2 id="section-heading-h2">CSV import</h2>
-          <p>
-            <form action="/upload" method="post" enctype="multipart/form-data">
-              <input type="file" name="file">
-              <input type="submit" value="Upload">
-            </form>
-          </p>
+          {% block content %}{% endblock %}
           <p>&nbsp;</p>
         </div>
       </div>
@@ -219,7 +207,7 @@
             class="usa-footer__logo grid-row mobile-lg:grid-col-6 mobile-lg:grid-gap-2">
             <div class="mobile-lg:grid-col-auto">
               <img class="usa-footer__logo-img"
-                src="uswds-2.2.1/img/logo-img.png" alt="">
+                src="/uswds-2.2.1/img/logo-img.png" alt="">
             </div>
             <div class="mobile-lg:grid-col-auto">
               <h3 class="usa-footer__logo-heading">Name of Agency</h3>
@@ -267,7 +255,7 @@
       </div>
     </div>
   </footer>
-  <script src="uswds-2.2.1/js/uswds.min.js"></script>
+  <script src="/uswds-2.2.1/js/uswds.min.js"></script>
   <walnut-highlight-tool></walnut-highlight-tool>
 </body>
 

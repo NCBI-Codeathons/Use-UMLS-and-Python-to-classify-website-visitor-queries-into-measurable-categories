@@ -1,5 +1,5 @@
 from werkzeug.utils import secure_filename
-from flask import (Flask, flash, request, redirect, url_for,
+from flask import (Flask, flash, request, redirect, url_for, render_template,
                    send_from_directory, send_file, make_response)
 import subprocess
 import datetime
@@ -16,10 +16,12 @@ JOB_INPUT_DIR = os.environ['JOB_INPUT_DIR']
 JOB_OUTPUT_DIR = os.environ['JOB_OUTPUT_DIR']
 UMLS_SEMANTIC_TYPES_CSV = os.environ['UMLS_SEMANTIC_TYPES_CSV']
 STATIC_CONTENT_DIR = os.environ['STATIC_CONTENT_DIR']
+TEMPLATE_DIR = os.environ['TEMPLATE_DIR']
 
 # set the project root directory as the static folder, you can set others.
 app = Flask(__name__, static_url_path='',
-            static_folder=STATIC_CONTENT_DIR)
+            static_folder=STATIC_CONTENT_DIR,
+            template_folder=TEMPLATE_DIR)
 
 app.secret_key = b'e10b5bafe7c27293090b53b95126b839'
 
@@ -31,9 +33,8 @@ app.secret_key = b'e10b5bafe7c27293090b53b95126b839'
 
 
 @app.route('/', methods=['GET'])
-def cgi():
-    return send_file(os.path.join(STATIC_CONTENT_DIR, 'index.html'),
-                     mimetype='text/html')
+def index():
+    return render_template("index.html")
 
 
 @app.route('/upload', methods=['POST'])
@@ -62,16 +63,7 @@ def check(job_id):
     if os.path.isfile(os.path.join(JOB_OUTPUT_DIR, job_id)):
         return redirect(url_for('done', job_id=job_id))
 
-    return ('''
-    <html>
-        <head>
-            <meta http-equiv="refresh" content="3;url=''' +
-            url_for('check', job_id=job_id) + '''" />
-        </head>
-        <body>
-            <h1>Running job {}...</h1>
-        </body>
-    </html>'''.format(job_id))
+    return render_template("check.html", job_id=job_id)
 
 
 @app.route('/done/<job_id>', methods=['GET'])
@@ -90,17 +82,7 @@ def done(job_id):
     if error:
         return "Error: {}".format(error)
 
-    return ('''
-    <html>
-        <head>
-            <title>Job results</title>
-        </head>
-        <body>
-            <h1>Results for {}...</h1>
-            <img width="800" src="'''.format(job_id) +
-            url_for('img', job_id=job_id) + '''" />
-        </body>
-    </html>''')
+    return render_template("result.html", job_id=job_id)
 
 
 @app.route('/img/<job_id>', methods=['GET'])

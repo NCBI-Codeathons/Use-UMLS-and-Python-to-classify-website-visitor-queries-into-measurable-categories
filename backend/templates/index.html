@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+    {% block content %}
+
+          <h1>Process your file with UMLS MetaMap</h1>
+          <ol>
+            <li>Export from Google Analytics profile NLM Main - Master
+              Production, Acquisition &gt; Search Console &gt; Queries. </li>
+            <li>Set the time period, such as the last 30 days.</li>
+            <li>Select Export &gt; CSV.</li>
+          </ol>
+          <h2 id="section-heading-h2">CSV import</h2>
+          <p>
+            <form action="{{ url_for('upload_file') }}" method="post"
+              enctype="multipart/form-data">
+              <input type="file" name="file">
+              <input type="submit" value="Upload">
+            </form>
+          </p>
+
+    {% endblock %}

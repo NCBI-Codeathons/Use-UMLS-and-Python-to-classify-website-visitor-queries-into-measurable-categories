@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+    {% block head %}
+            <meta http-equiv="refresh" content="3;url={{
+            url_for('check', job_id=job_id) }}" />
+    {% endblock %}
+
+    {% block content %}
+                <h1>Running job {{job_id}}...</h1>
+    {% endblock %}

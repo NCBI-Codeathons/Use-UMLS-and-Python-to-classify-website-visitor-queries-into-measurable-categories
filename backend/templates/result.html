@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+
+    {% block content %}
+            <h1>Results for {{job_id}}</h1>
+            <img width="800" src="{{url_for('img', job_id=job_id)}}" />
+    {% endblock %}
