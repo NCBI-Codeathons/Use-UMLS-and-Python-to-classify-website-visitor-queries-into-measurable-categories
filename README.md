@@ -42,6 +42,14 @@ For the purposes of this codethon we used the top 100 user search terms for one 
 
 The unmatched terms are processed with FuzzyUzzy to create containers, analyze trends and re-process to find additional matches.
 
+## Processing and Output
+
+Webservice input screen:
+![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/webserver%20interfase.jpg "File Upload for Processing")
+
+Search strings processed into UMLS semantic types categories:
+![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/metamap%20output.JPG "UMLS Semantic Types Categories")
+
 ## References
 
 [An overview of MetaMap](https://ii.nlm.nih.gov/Publications/Papers/JAMIA.2010.17.Aronson.pdf)
