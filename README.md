@@ -53,23 +53,28 @@ Webservice input screen:
 Search strings processed into UMLS semantic types categories:
 ![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/metamap%20output.JPG "UMLS Semantic Types Categories")
 
+## Future work
+
+- Implement pre-processing procedures to tag numeric IDs, foreign languages, bibliographic entities (journal names, document titles, etc.)
+- Implement post-processing procedures to surface untagged queries above a frequently threshold, and facilitate their manual tagging so they will be automatically tagged in the future
+
 ## References
 
 [An overview of MetaMap](https://ii.nlm.nih.gov/Publications/Papers/JAMIA.2010.17.Aronson.pdf)
 
 ## Team/People
 
-Dan Wendling NLM/LO/PSD
+Dan Wendling, NLM/LO/PSD
 
-Victor Cid NLM/LHC/CgSB
+Victor Cid, NLM/LHC/CgSB
 
-Damon Revoe NLM/NCBI/MGV
+Damon Revoe, NLM/NCBI/MGV
 
-Laritza Rodriguez NLM/LHC/CSB
+Laritza Rodriguez, NLM/LHC/CSB
 
-Wenya Rowe NLM/NCBCI/CBB
+Wenya Rowe, NLM/NCBCI/CBB
 
-Rachit Bhatia NLM/OCCS/STB
+Rachit Bhatia, NLM/OCCS/STB
 
 ## Past work
 
