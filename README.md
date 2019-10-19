@@ -2,9 +2,9 @@
 
 Analytics data for *search* for large web sites is often too verbose and inharmonious to analyze. One "portal" site studied receives around 150,000 "clicks" per month from search-engine results screens, and around 100,000 queries per month from site search. Reporting for each has many variations on the same conceptual ideas, making the content difficult to analyze. For this reason, many web managers are not looking for meaning in the search terms people are using. 
 
-This project uses Python with a tool called the [MetaMap](https://metamap.nlm.nih.gov) to tag default reports from Google Analytics using the [Semantic Network](https://semanticnetwork.nlm.nih.gov), which are both part of the [Unified Medical Language System (UMLS)](https://www.nlm.nih.gov/research/umls/index.html).
+How might we put more-frequent queries into "buckets" of broader topics, so subject matter experts can determine how well our customers are finding what they are looking for, and to see if our web site should be updated to serve those information needs better?
 
-The intent is to put more-frequent queries into buckets by topic, so subject matter experts can determine how well we serve these queries and if the web site should be updated to serve those information needs better.
+This tool operates on default reports from Google Analytics, using Python and the [MetaMap knowledge engine](https://metamap.nlm.nih.gov) to tag queries to categories in the [Semantic Network](https://semanticnetwork.nlm.nih.gov). MetaMap and the Semantic Network are components of the [Unified Medical Language System (UMLS)](https://www.nlm.nih.gov/research/umls/index.html). The current start-up script was written for Linux.
 
 **Use case:** A web analytist could say to a product owner, "Did you know that last month, 30 percent of your home page searches were about drugs? Should we take action on this?
 
@@ -17,8 +17,19 @@ Search represents the direct expression of our visitors’ intent. We could use 
 
 ## Top objectives
 
-- Implementing MetaMap matching in a lightweight web interface.
-- Creating tabular and visual outputs using Pandas, matplotlib/Seaborn/etc. D3.js charts are also a possibility.
+- Implement MetaMap matching in a lightweight web interface.
+- Create tabular and visual outputs using Pandas, matplotlib/Seaborn/etc. D3.js charts are also a possibility.
+
+## Mapping search terms to the UMLS
+
+To take full advantage of the features offered by the UMLS it will be important to tag search terms to UMLS mappings with a knowledge engine that not only finds synonyms, but also processes the text in a consistent manner to obtain the best relevant results.
+
+Metamap is a program developed by Lister Hill Medical Center with the purpose of improving medical text retrieval. It is based on the use of linguistic techniques and built on a knowledge base engine that includes:  tokenization, sentence boundary determination, acronym/abbreviation identification, part of speach tagging, lexical lookup in the Specialist Lexicon, and syntactic analysis through shallow paring of phrases, and mapping of the terms to the UMLS. The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS prefered term, the Concept Unique Identifier (CUI) and the UMLS semantic types.
+
+For the purposes of this codethon we used the top 100 user search terms for one week in October. The search strings are submitted to Metamap through -edits here later depending on what we end up using- requesting the output in MetaMap Indexing (MMI) output. The output includes string identifyer, ranking score, UMLS preferred term, UMLS Concept Unique Identifier (CUI), Semantic Type List, Trigger Information (string, code and location used to identify the UMLS concept), Location (text offsets), MeSH treecode(s) when available.
+
+The unmatched terms are processed with FuzzyUzzy to create containers, analyze trends and re-process to find additional matches.
+
 
 ## Workflow
 
@@ -27,28 +38,24 @@ Search represents the direct expression of our visitors’ intent. We could use 
 ## Dependencies
 
 ### Pre-Processing tools
-  List of abbreviations for Journals cited in Pubmed (https://www.nlm.nih.gov/bsd/serfile_addedinfo.html). File in the github  repository: J_Medline.txt.
-  - Medical language abbreviations -pending create de file.
-    Natural Language Processing Tool Kit through Python: delete punctuation, delete string that are numbers only, lower case,  limit to trigrams, English stopwords.
-- Metamap JAVA API, https://metamap.nlm.nih.gov/JavaApi.shtml
-- Python Machine Learning Packages
-  Pandas
-  K-Nearest Neighbor and Fuzzyuzzy to determine Machine Learning
-  Matplot Lib
-  Flask
-  Django
 
-More implementation advice: (https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/wiki)
+* [Metamap JAVA API](https://metamap.nlm.nih.gov/JavaApi.shtml)
+* (Linux startup script)
+* Python
+** Pandas
+** scikit-learn's K-Nearest Neighbors
+** FuzzyWuzzy for fuzzy matching and clustering
+** Matplotlib
+** Flask
+** Optional: Django if assistance in manual matching is needed.
 
-## Mapping search terms to the UMLS
+Yet to be integrated; may be useful:
 
-To take full advantage of the features offered by the UMLS it is important to base the search term to UMLS mappings on a knowledge engine that not only finds synonyms but also processes the text in a consistent manner to obtain the best relevant results.
+* List of abbreviations for *[Journals cited in Pubmed](https://www.nlm.nih.gov/bsd/serfile_addedinfo.html);* file in this github repository: J_Medline.txt
+- Medical language abbreviations
+- Natural Language Processing Tool Kit (NLTK) Python package: delete some punctuation, delete strings that appear to be numeric database IDs, limit to trigrams, English stopwords.
 
-Metamap is a program developed by Lister Hill Medical Center with the purpose of improving medical text retrieval. It is based on the use of linguistic techniques and built on a knowledge base engine that includes:  tokenization, sentence boundary determination, acronym/abbreviation identification, part of speach tagging, lexical lookup in the Specialist Lexicon, and syntactic analysis through shallow paring of phrases, and mapping of the terms to the UMLS. The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS prefered term, the Concept Unique Identifier (CUI) and the UMLS semantic types.
-
-For the purposes of this codethon we used the top 100 user search terms for one week in October. The search strings are submitted to Metamap through -edits here later depending on what we end up using- requesting the output in MetaMap Indexing (MMI) output. The output includes string identifyer, ranking score, UMLS preferred term, UMLS Concept Unique Identifier (CUI), Semantic Type List, Trigger Information (string, code and location used to identify the UMLS concept), Location (text offsets), MeSH treecode(s) when available.
-
-The unmatched terms are processed with FuzzyUzzy to create containers, analyze trends and re-process to find additional matches.
+[More implementation advice](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/wiki)
 
 ## Processing and Output
 
