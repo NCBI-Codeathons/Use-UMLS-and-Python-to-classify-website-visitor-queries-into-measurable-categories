@@ -1,12 +1,15 @@
 # Use UMLS and Python to classify website visitor queries into measurable categories
 
-Search log data for large web sites are often too verbose and inharmonious to analyze. The site www.nlm.nih.gov has around 100,000 visitor queries per month, with many variations on the same conceptual ideas. For this reason, many web managers are not looking for meaning in their search logs. This project uses Python with the UMLS MetaMap and other techniques to classify search terms to the Unified Medical Language System (UMLS).
+Data about search for large web sites is often too verbose and inharmonious to analyze. One "portal" site studied receives around 150,000 "clicks" from search-engine results screens and 100,000 queries from site-search per month. Both reports have many variations on the same conceptual ideas. For this reason, many web managers are not looking for meaning in the search terms people have used. This project uses Python with the UMLS MetaMap and other techniques to classify search terms to the Unified Medical Language System (UMLS). The intent is to put more-frequent queries into buckets by topic, so subject matter experts can determine how well we serve these queries and if the web site should be updated to serve those information needs better.
 
-Use case: A web analytist could say to a product owner, "Did you know that last month, 30 percent of our home page searches were about drugs? Should we take action on this?
+**Use case:** A web analytist could say to a product owner, "Did you know that last month, 30 percent of your home page searches were about drugs? Should we take action on this?
 
 ## Why is this project applicable to others in the community?
 
-Site search represents the direct expression of our visitors’ intent. We could use this data to improve our staff’s awareness of what customers want from us. For example, we could (1) Cluster and analyze trends we know about. For multi-faceted topics that directly relate to our mission, we could create customized analyses using Python to collect the disparate keywords people might search for into a single “bucket.” Where can we create a better match between user interest and our content? Where might we improve our site structure and navigation? (2) Focus staff work onto new trends, as the trends emerge. When something new starts to happen that can be matched to our mission statement, we can start new content projects to address the emerging need in HTML pages, social media posts, etc. The eventual goal is to post a Python code package that other HHS web managers can use to classify their own search logs.
+Search represents the direct expression of our visitors’ intent. We could use this data to improve our staff’s awareness of what customers want from us. For example, we could:
+
+1. **Cluster and analyze trends we know about.** For multi-faceted topics that directly relate to our mission, we could create customized analyses using Python to collect the disparate keywords people might search for into a single “bucket.” Where can we create a better match between user interest and our content? Where might we improve our site structure and navigation? 
+2. **Focus staff work onto new trends, as the trends emerge.** When something new starts to happen that can be matched to our mission statement, we can deploy social media posts on the new topic and start new content projects to address the emerging need. The eventual goal is to post a Python code package that other HHS web managers can use to classify their own search logs.
 
 ## Top objectives
 
@@ -18,6 +21,7 @@ Site search represents the direct expression of our visitors’ intent. We could
 ![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/searches_UMLS_workflow.JPG "Search Terms to UMLS")
 
 ## Dependencies
+
 ### Pre-Processing tools
   List of abbreviations for Journals cited in Pubmed (https://www.nlm.nih.gov/bsd/serfile_addedinfo.html). File in the github  repository: J_Medline.txt.
   - Medical language abbreviations -pending create de file.
@@ -64,17 +68,12 @@ Search strings processed into UMLS semantic types categories:
 
 ## Team/People
 
-Dan Wendling, NLM/LO/PSD
-
-Victor Cid, NLM/LHC/CgSB
-
-Damon Revoe, NLM/NCBI/MGV
-
-Laritza Rodriguez, NLM/LHC/CSB
-
-Wenya Rowe, NLM/NCBCI/CBB
-
-Rachit Bhatia, NLM/OCCS/STB
+* Dan Wendling, NLM/LO/PSD
+* Victor Cid, NLM/LHC/CgSB
+* Damon Revoe, NLM/NCBI/MGV
+* Laritza Rodriguez, NLM/LHC/CSB
+* Wenya Rowe, NLM/NCBCI/CBB
+* Rachit Bhatia, NLM/OCCS/STB
 
 ## Past work
 
