@@ -1,6 +1,10 @@
 # Use UMLS and Python to classify website visitor queries into measurable categories
 
-Data about search for large web sites is often too verbose and inharmonious to analyze. One "portal" site studied receives around 150,000 "clicks" from search-engine results screens and 100,000 queries from site-search per month. Both reports have many variations on the same conceptual ideas. For this reason, many web managers are not looking for meaning in the search terms people have used. This project uses Python with the UMLS MetaMap and other techniques to classify search terms to the Unified Medical Language System (UMLS). The intent is to put more-frequent queries into buckets by topic, so subject matter experts can determine how well we serve these queries and if the web site should be updated to serve those information needs better.
+Analytics data for *search* for large web sites is often too verbose and inharmonious to analyze. One "portal" site studied receives around 150,000 "clicks" per month from search-engine results screens, and around 100,000 queries per month from site search. Reporting for each has many variations on the same conceptual ideas, making the content difficult to analyze. For this reason, many web managers are not looking for meaning in the search terms people are using. 
+
+This project uses Python with a tool called the [MetaMap](https://metamap.nlm.nih.gov) to tag default reports from Google Analytics using the [Semantic Network](https://semanticnetwork.nlm.nih.gov), which are both part of the [Unified Medical Language System (UMLS)](https://www.nlm.nih.gov/research/umls/index.html).
+
+The intent is to put more-frequent queries into buckets by topic, so subject matter experts can determine how well we serve these queries and if the web site should be updated to serve those information needs better.
 
 **Use case:** A web analytist could say to a product owner, "Did you know that last month, 30 percent of your home page searches were about drugs? Should we take action on this?
 
