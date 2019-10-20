@@ -1,12 +1,12 @@
 # Use UMLS and Python to classify website visitor queries into measurable categories
 
-Analytics data for *search* for large web sites is often too verbose and inharmonious to analyze. One "portal" site studied receives around 150,000 "clicks" per month from search-engine results screens, and around 100,000 queries per month from site search. Reporting for each has many variations on the same conceptual ideas, making the content difficult to analyze. For this reason, many web managers are not looking for meaning in the search terms people are using. 
+Analytics data for *search* for large web sites is often too verbose and inharmonious to analyze. One "portal" site studied receives around 150,000 "clicks" per month from search-engine results screens, and around 100,000 queries per month from site search. Reporting for each has many variations on the same conceptual ideas, making the content difficult to analyze and summarize. For this reason, many web managers are not looking for meaning in the search terms people are using. 
 
-How might we put more-frequent queries into "buckets" of broader topics, so subject matter experts can determine how well our customers are finding what they are looking for, and to see if our web site should be updated to serve those information needs better?
+How might we put more-frequent queries into "buckets" of broader topics, so subject matter experts can focus on their own "buckets" and determine how well customers are finding what they are looking for? This in turn will help the SMEs envision ways to serve those information needs better.
 
 This tool operates on default reports from Google Analytics, using Python and the [MetaMap knowledge engine](https://metamap.nlm.nih.gov) to tag queries to categories in the [Semantic Network](https://semanticnetwork.nlm.nih.gov). MetaMap and the Semantic Network are components of the [Unified Medical Language System (UMLS)](https://www.nlm.nih.gov/research/umls/index.html). The current start-up script was written for Linux.
 
-**Use case:** A web analytist could say to a product owner, "Did you know that last month, 30 percent of your home page searches were about drugs? Should we take action on this?
+**Use case:** A web analytist could say to a product owner, "Did you know that last month, 30 percent of your home page searches were about drugs? Should we take action on this? How might we improve task completion and reduce time on task, for this type of information need?
 
 ## Screenshots
 
