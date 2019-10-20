@@ -8,6 +8,14 @@ This tool operates on default reports from Google Analytics, using Python and th
 
 **Use case:** A web analytist could say to a product owner, "Did you know that last month, 30 percent of your home page searches were about drugs? Should we take action on this?
 
+## Screenshots
+
+### Upload
+
+![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/m
+aster/screenshot-input.png "screen to upload file")
+
+
 ## Why is this project applicable to others in the community?
 
 Search represents the direct expression of our visitors’ intent. We could use this data to improve our staff’s awareness of what customers want from us. For example, we could:
