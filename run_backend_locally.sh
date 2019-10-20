@@ -41,7 +41,7 @@ cleanup()
     kill "$backend_pid" "$worker_pid" 2>/dev/null
 }
 
-trap cleanup EXIT
+trap cleanup INT TERM EXIT
 
 echo 'Starting web backend...'
 gunicorn -w 4 -b :8080 backend.backend:app > backend.log 2>&1 &
