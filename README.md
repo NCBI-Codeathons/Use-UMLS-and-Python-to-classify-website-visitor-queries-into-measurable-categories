@@ -1,4 +1,6 @@
-# Use UMLS and Python to classify website visitor queries into measurable categories
+# Classify website visitor queries into measurable categories
+
+> **Chart and respond to trends in information seeking, by classifying your web visitor queries to a taxonomy and an ontology**
 
 Analytics data for *search* for large web sites is often too verbose and inharmonious to analyze. One "portal" site studied receives around 150,000 "clicks" per month from search-engine results screens, and around 100,000 queries per month from site search. Reporting for each has many variations on the same conceptual ideas, making the content difficult to analyze and summarize. For this reason, many web managers are not looking for meaning in the search terms people are using. 
 
