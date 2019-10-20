@@ -4,7 +4,7 @@
 
 Analytics data for *search* for large web sites is often too verbose and inharmonious to analyze. One "portal" site studied receives around 150,000 "clicks" per month from search-engine results screens, and around 100,000 queries per month from site search. Reporting for each has many variations on the same conceptual ideas, making the content difficult to analyze and summarize. For this reason, many web managers are not looking for meaning in the search terms people are using. 
 
-How might we put more-frequent queries into "buckets" of broader topics, so subject matter experts can focus on their own "buckets" and determine how well customers are finding what they are looking for? This in turn will help the SMEs envision ways to serve those information needs better.
+We could put more-frequent queries into "buckets" of broader topics, so subject matter experts can focus on their own "buckets" and determine how well customers are finding what they are looking for? This work will help the SMEs envision ways to serve those information needs better.
 
 Search represents the direct expression of our visitors’ intent. We could use this data to improve our staff’s awareness of what customers want from us. 
 
@@ -54,7 +54,6 @@ The unmatched terms are processed with FuzzyWuzzy to create clusters, analyze tr
 
 For more information see [this repo's wiki pages](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/wiki).
 
-
 ## Workflow
 
 Only partially implemented during this Codeathon.
@@ -98,7 +97,7 @@ Search Strings input used for MetaMap and FuzzyWuzzy
 * Lai KH, Topaz M, Goss FR, Zhou L. (2015). Automated misspelling detection and correction in clinical free-text records. J Biomed Inform. Jun;55:188-95. doi: 10.1016/j.jbi.2015.04.008. Epub 2015 Apr 24. PMID: 25917057.
 * Thanks to NCBI Codeathon staff and participants; NLM-PSD-RWS Management; 2017 HHS Data Science CoLab Bootcamp (HHS-CTO and participants); MetaMap and UMLS staff; OCCS/AB Research & Development; OCCS Desktop Support; Data Society staff; many reviewers.
 
-## Team/People
+## People
 
 * Dan Wendling, team lead, NLM/LO/PSD
 * Victor Cid, NLM/LHC/CgSB
