@@ -4,15 +4,15 @@
 
 Analytics data for *search* for large web sites is often too verbose and inharmonious to analyze. One "portal" site studied receives around 150,000 "clicks" per month from search-engine results screens, and around 100,000 queries per month from site search. Reporting for each has many variations on the same conceptual ideas, making the content difficult to analyze and summarize. For this reason, many web managers are not looking for meaning in the search terms people are using. 
 
-**We should** put the more-frequent queries into "buckets" of broader topics, so subject matter experts have a way to focus on their own buckets and evaluate how well customers are finding what they are looking for. This work will help the SMEs envision new ways to serve those information needs better.
+**We should** put the more-frequent queries into "buckets" of broader topics, so subject matter experts have a way to focus on their own buckets and evaluate how well customers are finding what the customers are looking for. This work will help the SMEs envision new ways to serve those information needs better.
 
 Search represents the direct expression of our visitors’ intent. We should use this data to improve our staff’s awareness of what customers need from us. 
 
 ## Use cases
 
 1. A web analytist could say to a product owner, "Did you know that last month, 30 percent of your home page searches were in some way about drugs? Should we take action on this? How might we improve task completion and reduce time on task, for this type of information need?
-2. We should cluster and analyze **trends we know about.** For multi-faceted topics that directly relate to our mission, we should create customized analyses using Python to collect the disparate keywords people might search for into a single “bucket.” Where can we create a better match between user interest and our content? Where might we improve our site structure and navigation? 
-3. We should focus staff work onto **new trends, as the trends emerge.** When something new starts to happen that can be matched to our mission statement, we should deploy social media posts on the new topic and start new content projects to address the emerging information need.
+2. We should cluster and analyze **trends we know about.** For multi-faceted topics that directly relate to our mission, we should create customized analyses to collect the disparate keywords people might search for into a single bucket. How can we create a better match between user interest and our content? Where might we improve our site structure and navigation? 
+3. We should focus staff work on **new trends, as the trends emerge.** When something new starts to happen that can be matched to our mission statement, we should deploy social media posts on the new topic immediately, and start new content projects to address the emerging information need.
 
 ## Top objectives
 
@@ -29,7 +29,7 @@ More specifically, processing uses Python 3 and the National Library of Medicine
 
 ## Mapping search terms to the UMLS
 
-[MetaMap](https://metamap.nlm.nih.gov) was developed by NLM's [Lister Hill National Center for Biomedical Communications](https://lhncbc.nlm.nih.gov/) to improve medical text retrieval. Its linguistic techniques are built on a knowledge base engine that includes: 
+[MetaMap](https://metamap.nlm.nih.gov) was developed by NLM's [Lister Hill National Center for Biomedical Communications](https://lhncbc.nlm.nih.gov/) to improve medical text retrieval. Its linguistic techniques are built on a knowledge-base engine that includes: 
 * Tokenization
 * Sentence boundary determination
 * Acronym/abbreviation identification
