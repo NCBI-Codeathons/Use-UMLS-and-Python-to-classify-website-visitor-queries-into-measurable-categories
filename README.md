@@ -29,13 +29,31 @@ More specifically, processing will use Python 3 and the National Library of Medi
 
 ## Mapping search terms to the UMLS
 
-The UMLS MetaMap knowledge engine maps to synonyms, takes into account lexical variations, and processes text in a consistent manner to obtain the best relevant results.
+[MetaMap](https://metamap.nlm.nih.gov) was developed by NLM's [Lister Hill National Center for Biomedical Communications](https://lhncbc.nlm.nih.gov/) to improve medical text retrieval. Its linguistic techniques are built on a knowledge base engine that includes: 
+* Tokenization
+* Sentence boundary determination
+* Acronym/abbreviation identification
+* Part-of-speach tagging
+* Lexical lookup in the Specialist Lexicon
+* Syntactic analysis through shallow paring of phrases
+* Mapping of the input to the UMLS. 
 
-Metamap is a program developed by Lister Hill Medical Center with the purpose of improving medical text retrieval. It is based on the use of linguistic techniques and built on a knowledge base engine that includes:  tokenization, sentence boundary determination, acronym/abbreviation identification, part of speach tagging, lexical lookup in the Specialist Lexicon, and syntactic analysis through shallow paring of phrases, and mapping of the terms to the UMLS. The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS prefered term, the Concept Unique Identifier (CUI) and the UMLS semantic types.
+The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS prefered term, the Concept Unique Identifier (CUI) and the UMLS Semantic Types.
 
-For the purposes of this codethon we used the top 100 user search terms for one week in October. The search strings are submitted to Metamap through -edits here later depending on what we end up using- requesting the output in MetaMap Indexing (MMI) output. The output includes string identifyer, ranking score, UMLS preferred term, UMLS Concept Unique Identifier (CUI), Semantic Type List, Trigger Information (string, code and location used to identify the UMLS concept), Location (text offsets), MeSH treecode(s) when available.
+For the purposes of this Codethon we used 30 days of search terms prior to the Codeathon start. The search strings are submitted to MetaMap through command line options created with the help of MetaMap staff. Results are output to MetaMap Indexing (MMI) output, which includes (some are "when available"):
+* String identifier
+* Ranking score
+* UMLS preferred term
+* UMLS Concept Unique Identifier (CUI)
+* Semantic Type List
+* Trigger Information (string, code and location used to identify the UMLS concept)
+* Location (text offsets)
+* MeSH tree code(s).
 
 The unmatched terms are processed with FuzzyWuzzy to create clusters, analyze trends and re-process to find additional matches.
+
+For more information see [this repo's wiki pages](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/wiki).
+
 
 ## Workflow
 
@@ -62,8 +80,6 @@ Yet to be integrated; may be useful:
 * List of abbreviations for *[Journals cited in Pubmed](https://www.nlm.nih.gov/bsd/serfile_addedinfo.html);* file in this github repository: J_Medline.txt
 - Medical language abbreviations
 - Natural Language Processing Tool Kit (NLTK) Python package: delete some punctuation, delete strings that appear to be numeric database IDs, limit to trigrams, English stopwords.
-
-[More implementation advice](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/wiki)
 
 ## Additional output
 
