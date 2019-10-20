@@ -3,6 +3,7 @@
     {% block content %}
 
           <h1>Tag GA exports with the MetaMap knowledge engine</h1>
+          
           <ol>
             <li>In your Google Analytics profile, select Acquisition &gt; Search Console &gt; Queries</li>
             <li>Set row output to 1,000</li>
@@ -12,9 +13,12 @@
             the types of items MetaMap won't recognize anyway (you'll learn more 
             about this over time; LATER we can integrate these routines run 
             automatically AFTER you upload, below).</li>
-            <li>Export to CSV the file format that is ready for ingest below.</li>
+            <li>Export to CSV the file format needed here (GA export without leading or trailing rows)</li>
+            <li>Process below.</li>
           </ol>
+          
           <h2 id="section-heading-h2">CSV import</h2>
+          
           <p>
             <form action="{{ url_for('upload_file') }}" method="post"
               enctype="multipart/form-data">
