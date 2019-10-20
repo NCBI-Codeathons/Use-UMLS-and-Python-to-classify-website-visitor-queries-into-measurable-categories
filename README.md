@@ -29,7 +29,7 @@ More specifically, processing will use Python 3 and the National Library of Medi
 
 ## Mapping search terms to the UMLS
 
-The UMLS MetaMap knowledge engine maps to synonyms takes into account lexical variations, and processes text in a consistent manner to obtain the best relevant results.
+The UMLS MetaMap knowledge engine maps to synonyms, takes into account lexical variations, and processes text in a consistent manner to obtain the best relevant results.
 
 Metamap is a program developed by Lister Hill Medical Center with the purpose of improving medical text retrieval. It is based on the use of linguistic techniques and built on a knowledge base engine that includes:  tokenization, sentence boundary determination, acronym/abbreviation identification, part of speach tagging, lexical lookup in the Specialist Lexicon, and syntactic analysis through shallow paring of phrases, and mapping of the terms to the UMLS. The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS prefered term, the Concept Unique Identifier (CUI) and the UMLS semantic types.
 
