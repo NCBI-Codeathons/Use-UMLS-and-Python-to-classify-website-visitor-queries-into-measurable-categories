@@ -10,10 +10,7 @@ This tool operates on default reports from Google Analytics, using Python and th
 
 ## Screenshots
 
-### Upload
-
-![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/m
-aster/screenshot-input.png "screen to upload file")
+![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/screenshot-input.png "screen to upload file")
 
 
 ## Why is this project applicable to others in the community?
