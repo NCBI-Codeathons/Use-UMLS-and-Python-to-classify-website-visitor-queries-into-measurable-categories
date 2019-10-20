@@ -2,12 +2,17 @@
 
     {% block content %}
 
-          <h1>Process your file with UMLS MetaMap</h1>
+          <h1>Tag GA exports with the MetaMap knowledge engine</h1>
           <ol>
-            <li>Export from Google Analytics profile NLM Main - Master
-              Production, Acquisition &gt; Search Console &gt; Queries. </li>
-            <li>Set the time period, such as the last 30 days.</li>
+            <li>In your Google Analytics profile, select Acquisition &gt; Search Console &gt; Queries</li>
+            <li>Set row output to 1,000</li>
+            <li>Set time period; perhaps the last 30 days</li>
             <li>Select Export &gt; CSV.</li>
+            <li>Optional: Create/run your own pre-processing routines, if any, to tag 
+            the types of items MetaMap won't recognize anyway (you'll learn more 
+            about this over time; LATER we can integrate these routines run 
+            automatically AFTER you upload, below).</li>
+            <li>Export to CSV the file format that is ready for ingest below.</li>
           </ol>
           <h2 id="section-heading-h2">CSV import</h2>
           <p>
