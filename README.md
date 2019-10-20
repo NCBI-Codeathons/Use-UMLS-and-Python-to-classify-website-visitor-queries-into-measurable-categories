@@ -39,7 +39,9 @@ The unmatched terms are processed with FuzzyWuzzy to create clusters, analyze tr
 
 ## Workflow
 
-![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/searches_UMLS_workflow.JPG "Search Terms to UMLS")
+Only partially implemented during this Codeathon.
+
+<kbd><img src="https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/workflow.png" alt="Workflow" /></kbd>
 
 ## Dependencies
 
