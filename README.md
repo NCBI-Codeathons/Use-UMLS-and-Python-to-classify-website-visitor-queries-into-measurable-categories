@@ -8,10 +8,26 @@ This tool operates on default reports from Google Analytics, using Python and th
 
 **Use case:** A web analytist could say to a product owner, "Did you know that last month, 30 percent of your home page searches were about drugs? Should we take action on this? How might we improve task completion and reduce time on task, for this type of information need?
 
+## Top objectives
+
+- Implement MetaMap matching in a lightweight web interface.
+- Create tabular and visual outputs using Pandas, matplotlib/Seaborn/etc. D3.js charts are also a possibility.
+
 ## Screenshots
 
 <kbd><img src="https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/screenshot-input.png" alt="screen to upload file" /></kbd>
 
+<kbd><img src="https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/metamap%20output.JPG" alt="UMLS Semantic Types Categories" /></kbd>
+
+## Mapping search terms to the UMLS
+
+The UMLS MetaMap knowledge engine maps to synonyms takes into account lexical variations, and processes text in a consistent manner to obtain the best relevant results.
+
+Metamap is a program developed by Lister Hill Medical Center with the purpose of improving medical text retrieval. It is based on the use of linguistic techniques and built on a knowledge base engine that includes:  tokenization, sentence boundary determination, acronym/abbreviation identification, part of speach tagging, lexical lookup in the Specialist Lexicon, and syntactic analysis through shallow paring of phrases, and mapping of the terms to the UMLS. The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS prefered term, the Concept Unique Identifier (CUI) and the UMLS semantic types.
+
+For the purposes of this codethon we used the top 100 user search terms for one week in October. The search strings are submitted to Metamap through -edits here later depending on what we end up using- requesting the output in MetaMap Indexing (MMI) output. The output includes string identifyer, ranking score, UMLS preferred term, UMLS Concept Unique Identifier (CUI), Semantic Type List, Trigger Information (string, code and location used to identify the UMLS concept), Location (text offsets), MeSH treecode(s) when available.
+
+The unmatched terms are processed with FuzzyWuzzy to create clusters, analyze trends and re-process to find additional matches.
 
 ## Why is this project applicable to others in the community?
 
@@ -19,21 +35,6 @@ Search represents the direct expression of our visitors’ intent. We could use 
 
 1. **Cluster and analyze trends we know about.** For multi-faceted topics that directly relate to our mission, we could create customized analyses using Python to collect the disparate keywords people might search for into a single “bucket.” Where can we create a better match between user interest and our content? Where might we improve our site structure and navigation? 
 2. **Focus staff work onto new trends, as the trends emerge.** When something new starts to happen that can be matched to our mission statement, we can deploy social media posts on the new topic and start new content projects to address the emerging need. The eventual goal is to post a Python code package that other HHS web managers can use to classify their own search logs.
-
-## Top objectives
-
-- Implement MetaMap matching in a lightweight web interface.
-- Create tabular and visual outputs using Pandas, matplotlib/Seaborn/etc. D3.js charts are also a possibility.
-
-## Mapping search terms to the UMLS
-
-To take full advantage of the features offered by the UMLS it will be important to tag search terms to UMLS mappings with a knowledge engine that not only finds synonyms, but also processes the text in a consistent manner to obtain the best relevant results.
-
-Metamap is a program developed by Lister Hill Medical Center with the purpose of improving medical text retrieval. It is based on the use of linguistic techniques and built on a knowledge base engine that includes:  tokenization, sentence boundary determination, acronym/abbreviation identification, part of speach tagging, lexical lookup in the Specialist Lexicon, and syntactic analysis through shallow paring of phrases, and mapping of the terms to the UMLS. The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS prefered term, the Concept Unique Identifier (CUI) and the UMLS semantic types.
-
-For the purposes of this codethon we used the top 100 user search terms for one week in October. The search strings are submitted to Metamap through -edits here later depending on what we end up using- requesting the output in MetaMap Indexing (MMI) output. The output includes string identifyer, ranking score, UMLS preferred term, UMLS Concept Unique Identifier (CUI), Semantic Type List, Trigger Information (string, code and location used to identify the UMLS concept), Location (text offsets), MeSH treecode(s) when available.
-
-The unmatched terms are processed with FuzzyWuzzy to create clusters, analyze trends and re-process to find additional matches.
 
 ## Workflow
 
@@ -61,16 +62,11 @@ Yet to be integrated; may be useful:
 
 [More implementation advice](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/wiki)
 
-## Processing and Output
+## Additional output
 
 Search Strings input used for MetaMap and FuzzyWuzzy
 ![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/wordcloud_search_strings.JPG "Search terms")
 
-Webservice input screen:
-![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/webserver%20interfase.jpg "File Upload for Processing")
-
-Search strings processed into UMLS semantic types categories:
-![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/metamap%20output.JPG "UMLS Semantic Types Categories")
 
 ## Future work
 
@@ -83,7 +79,7 @@ Search strings processed into UMLS semantic types categories:
 
 ## Team/People
 
-* Dan Wendling, NLM/LO/PSD
+* Dan Wendling, team lead, NLM/LO/PSD
 * Victor Cid, NLM/LHC/CgSB
 * Damon Revoe, NLM/NCBI/MGV
 * Laritza Rodriguez, NLM/LHC/CSB
