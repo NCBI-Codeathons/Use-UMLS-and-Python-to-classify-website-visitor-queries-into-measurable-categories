@@ -10,13 +10,13 @@ Search represents the direct expression of our visitors’ intent. We should use
 
 ## Use cases
 
-1. A web analytist should say to a product owner, "Did you know that last month, 30 percent of your home page searches were about drugs? Should we take action on this? How might we improve task completion and reduce time on task, for this type of information need?
+1. A web analytist could say to a product owner, "Did you know that last month, 30 percent of your home page searches were in some way about drugs? Should we take action on this? How might we improve task completion and reduce time on task, for this type of information need?
 2. We should cluster and analyze **trends we know about.** For multi-faceted topics that directly relate to our mission, we should create customized analyses using Python to collect the disparate keywords people might search for into a single “bucket.” Where can we create a better match between user interest and our content? Where might we improve our site structure and navigation? 
-3. We should focus staff work onto **new trends,** as the trends emerge. When something new starts to happen that can be matched to our mission statement, we should deploy social media posts on the new topic and start new content projects to address the emerging information need.
+3. We should focus staff work onto **new trends, as the trends emerge.** When something new starts to happen that can be matched to our mission statement, we should deploy social media posts on the new topic and start new content projects to address the emerging information need.
 
 ## Top objectives
 
-* Interact with the MetaMap knowledge engine to tag out-of-the-box GA reports, through an easy-to-use web interface. Focus first on the GA report Acquisition > Search Console > Queries.
+* Interact with the MetaMap knowledge engine to tag out-of-the-box Google Analytics reports, through an easy-to-use web interface. Focus first on the GA report Acquisition > Search Console > Queries.
 * Create tabular and visual outputs using Pandas, matplotlib, C3.js, D3.js and/or Tableau.
 
 More specifically, processing uses Python 3 and the National Library of Medicine's [MetaMap knowledge engine](https://metamap.nlm.nih.gov) to tag queries to categories in NLM's [Semantic Network](https://semanticnetwork.nlm.nih.gov). MetaMap and the Semantic Network are components of NLM's [Unified Medical Language System (UMLS)](https://www.nlm.nih.gov/research/umls/index.html). The current start-up script was written for Linux.
