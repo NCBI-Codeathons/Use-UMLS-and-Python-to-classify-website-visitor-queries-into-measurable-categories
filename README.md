@@ -93,15 +93,15 @@ Search Strings input used for MetaMap and FuzzyWuzzy
 ## Influences and thanks
 
 * [An overview of MetaMap](https://ii.nlm.nih.gov/Publications/Papers/JAMIA.2010.17.Aronson.pdf)
-* McCray AT, Burgun A, Bodenreider O. (2001). Aggregating UMLS semantic types for reducing conceptual complexity. Stud Health Technol Inform. 84(Pt 1):216-20. PMID: 11604736. See also https://semanticnetwork.nlm.nih.gov/
-* Lai KH, Topaz M, Goss FR, Zhou L. (2015). Automated misspelling detection and correction in clinical free-text records. J Biomed Inform. Jun;55:188-95. doi: 10.1016/j.jbi.2015.04.008. Epub 2015 Apr 24. PMID: 25917057.
+* McCray AT, Burgun A, Bodenreider O. (2001). [Aggregating UMLS semantic types for reducing conceptual complexity](https://www.ncbi.nlm.nih.gov/pubmed/?term=11604736). Stud Health Technol Inform. 84(Pt 1):216-20. PMID: 11604736. See also https://semanticnetwork.nlm.nih.gov/
+* Lai KH, Topaz M, Goss FR, Zhou L. (2015). [Automated misspelling detection and correction in clinical free-text records. J Biomed Inform](https://www.ncbi.nlm.nih.gov/pubmed/?term=25917057%5Buid%5D). Jun;55:188-95. doi: 10.1016/j.jbi.2015.04.008. Epub 2015 Apr 24. PMID: 25917057.
 * Thanks to NCBI Codeathon staff and participants; NLM-PSD-RWS Management; 2017 HHS Data Science CoLab Bootcamp (HHS-CTO and participants); MetaMap and UMLS staff; OCCS/AB Research & Development; OCCS Desktop Support; Data Society staff; many reviewers.
 
 ## People
 
 * Dan Wendling, team lead, NLM/LO/PSD
+* Dmitry Revoe, NLM/NCBI/MGV
 * Victor Cid, NLM/LHC/CgSB
-* Damon Revoe, NLM/NCBI/MGV
 * Laritza Rodriguez, NLM/LHC/CSB
 * Wenya Rowe, NLM/NCBCI/CBB
 * Rachit Bhatia, NLM/OCCS/STB
