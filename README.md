@@ -10,7 +10,7 @@ Search represents the direct expression of our visitors’ intent. We should use
 
 ## Use cases
 
-1. A web analytist could say to a product owner, "Did you know that last month, 30 percent of your home page searches were in some way about drugs? Should we take action on this? How might we improve task completion and reduce time on task, for this type of information need?
+1. A web analyst could say to a product owner, "Did you know that last month, 30 percent of your home page searches were in some way about drugs? Should we take action on this? How might we **improve task completion** and **reduce time on task,** for this type of information need?
 2. We should cluster and analyze **trends we know about.** For multi-faceted topics that directly relate to our mission, we should create customized analyses to collect the disparate keywords people might search for into a single bucket. How can we create a better match between user interest and our content? Where might we improve our site structure and navigation? 
 3. We should focus staff work on **new trends, as the trends emerge.** When something new starts to happen that can be matched to our mission statement, we should deploy social media posts on the new topic immediately, and start new content projects to address the emerging information need.
 
@@ -33,14 +33,14 @@ More specifically, processing uses Python 3 and the National Library of Medicine
 * Tokenization
 * Sentence boundary determination
 * Acronym/abbreviation identification
-* Part-of-speach tagging
+* Part-of-speech tagging
 * Lexical lookup in the Specialist Lexicon
 * Syntactic analysis through shallow paring of phrases
 * Mapping of the input to the UMLS. 
 
-The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS prefered term, the Concept Unique Identifier (CUI) and the UMLS Semantic Types.
+The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS preferred term, the Concept Unique Identifier (CUI) and the UMLS Semantic Types.
 
-For the purposes of this Codethon we used 30 days of search terms prior to the Codeathon start. The search strings are submitted to MetaMap through command line options created with the help of MetaMap staff. Results are output to MetaMap Indexing (MMI) output, which includes (some are "when available"):
+For the purposes of this Codeathon we exported 30 days of search terms prior to the Codeathon start. The search strings are submitted to MetaMap through command line options created with the help of MetaMap staff. Results are output to MetaMap Indexing (MMI) output, which includes (some are "when available"):
 * String identifier
 * Ranking score
 * UMLS preferred term
@@ -64,7 +64,7 @@ Only partially implemented during this Codeathon.
 
 ### Pre-Processing tools
 
-* [Metamap JAVA API](https://metamap.nlm.nih.gov/JavaApi.shtml)
+* [MetaMap JAVA API](https://metamap.nlm.nih.gov/JavaApi.shtml)
 * (Linux startup script)
 * Python
 ** Pandas
@@ -76,7 +76,7 @@ Only partially implemented during this Codeathon.
 
 Yet to be integrated; may be useful:
 
-* List of abbreviations for *[Journals cited in Pubmed](https://www.nlm.nih.gov/bsd/serfile_addedinfo.html);* file in this github repository: J_Medline.txt
+* List of abbreviations for *[Journals cited in PubMed](https://www.nlm.nih.gov/bsd/serfile_addedinfo.html);* file in this GitHub repository: J_Medline.txt
 - Medical language abbreviations
 - Natural Language Processing Tool Kit (NLTK) Python package: delete some punctuation, delete strings that appear to be numeric database IDs, limit to trigrams, English stopwords.
 
