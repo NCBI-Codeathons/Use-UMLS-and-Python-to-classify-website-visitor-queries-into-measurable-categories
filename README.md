@@ -95,6 +95,7 @@ Search Strings input used for MetaMap and FuzzyWuzzy
 * [An overview of MetaMap](https://ii.nlm.nih.gov/Publications/Papers/JAMIA.2010.17.Aronson.pdf)
 * McCray AT, Burgun A, Bodenreider O. (2001). [Aggregating UMLS semantic types for reducing conceptual complexity](https://www.ncbi.nlm.nih.gov/pubmed/?term=11604736). Stud Health Technol Inform. 84(Pt 1):216-20. PMID: 11604736. See also https://semanticnetwork.nlm.nih.gov/
 * Lai KH, Topaz M, Goss FR, Zhou L. (2015). [Automated misspelling detection and correction in clinical free-text records. J Biomed Inform](https://www.ncbi.nlm.nih.gov/pubmed/?term=25917057%5Buid%5D). Jun;55:188-95. doi: 10.1016/j.jbi.2015.04.008. Epub 2015 Apr 24. PMID: 25917057.
+* Lu C, Aronson AR, Shooshan SE, Demner-Fushman D. (2019). Spell checker for consumer language (CSpell) Journal of the American Medical Informatics Association. Mar;26:3:211-218. DOI: https://doi.org/10.1093/jamia/ocy171. 
 * Thanks to NCBI Codeathon staff and participants; NLM-PSD-RWS Management; 2017 HHS Data Science CoLab Bootcamp (HHS-CTO and participants); MetaMap and UMLS staff; OCCS/AB Research & Development; OCCS Desktop Support; Data Society staff; many reviewers.
 
 ## People
