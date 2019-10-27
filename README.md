@@ -14,12 +14,6 @@ Search represents the direct expression of our visitors’ intent. We should use
 2. We should cluster and analyze **trends we know about.** For multi-faceted topics that directly relate to our mission, we should create customized analyses to collect the disparate keywords people might search for into a single bucket. How can we create a better match between user interest and our content? Where might we improve our site structure and navigation? 
 3. We should focus staff work on **new trends, as the trends emerge.** When something new starts to happen that can be matched to our mission statement, we should deploy social media posts on the new topic immediately, and start new content projects to address the emerging information need.
 
-## Top objectives
-
-* Interact with the MetaMap knowledge engine to tag out-of-the-box Google Analytics reports, through an easy-to-use web interface. Focus first on the GA report Acquisition > Search Console > Queries.
-* Create tabular and visual outputs using Pandas, matplotlib, C3.js, D3.js and/or Tableau.
-
-More specifically, processing uses Python 3 and the National Library of Medicine's [MetaMap knowledge engine](https://metamap.nlm.nih.gov) to tag queries to categories in NLM's [Semantic Network](https://semanticnetwork.nlm.nih.gov). MetaMap and the Semantic Network are components of NLM's [Unified Medical Language System (UMLS)](https://www.nlm.nih.gov/research/umls/index.html). The current start-up script was written for Linux.
 
 ## Screenshots
 
@@ -27,32 +21,6 @@ More specifically, processing uses Python 3 and the National Library of Medicine
 
 <kbd><img src="https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/metamap%20output.JPG" alt="UMLS Semantic Types Categories" /></kbd>
 
-## Mapping search terms to the UMLS
-
-[MetaMap](https://metamap.nlm.nih.gov) was developed by NLM's [Lister Hill National Center for Biomedical Communications](https://lhncbc.nlm.nih.gov/) to improve medical text retrieval. Its linguistic techniques are built on a knowledge-base engine that includes: 
-* Tokenization
-* Sentence boundary determination
-* Acronym/abbreviation identification
-* Part-of-speech tagging
-* Lexical lookup in the Specialist Lexicon
-* Syntactic analysis through shallow paring of phrases
-* Mapping of the input to the UMLS. 
-
-The output is enhanced with a ranking score that allows the user to select the best matching terms, the UMLS preferred term, the Concept Unique Identifier (CUI) and the UMLS Semantic Types.
-
-For the purposes of this Codeathon we exported 30 days of search terms prior to the Codeathon start. The search strings are submitted to MetaMap through command line options created with the help of MetaMap staff. Results are output to MetaMap Indexing (MMI) output, which includes (some are "when available"):
-* String identifier
-* Ranking score
-* UMLS preferred term
-* UMLS Concept Unique Identifier (CUI)
-* Semantic Type List
-* Trigger Information (string, code and location used to identify the UMLS concept)
-* Location (text offsets)
-* MeSH tree code(s).
-
-The unmatched terms are processed with FuzzyWuzzy to create clusters, analyze trends and re-process to find additional matches.
-
-For more information see [this repo's wiki pages](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/wiki).
 
 ## Workflow
 
