@@ -34,6 +34,7 @@ Only partially implemented during this Codeathon.
 
 * [MetaMap JAVA API](https://metamap.nlm.nih.gov/JavaApi.shtml)
 * (Linux startup script)
+* [CSpell - Spell checker for consumer language](https://lsg3.nlm.nih.gov/LexSysGroup/Projects/cSpell/current/web/index.html)
 * Python
 ** Pandas
 ** scikit-learn's K-Nearest Neighbors
