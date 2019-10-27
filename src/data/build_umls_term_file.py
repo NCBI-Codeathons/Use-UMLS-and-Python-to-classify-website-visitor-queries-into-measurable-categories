@@ -55,10 +55,10 @@ HOW TO PREPARE THE SOURCE FILES
 import pandas as pd
 import os
 
-os.chdir('/Users/name/Projects/semanticsearch')
+# Set working directory and directories for read/write
+envHome = (os.environ['HOME'])
+os.chdir(envHome + '/Projects/classifysearches')
 
-# Set working directory, read/write locations
-# UPDATE AS APPROPRIATE
 dataRaw = 'data/external/umls_distribution2019AA/' # Put log here before running script
 dataMatchFiles = 'data/matchFiles/' # Permanent helper files; both reading and writing required
 reports = 'reports/'

@@ -5,7 +5,7 @@ Created on Sat Oct 26 12:48:32 2019
 
 @author: wendlingd@nih.gov
 
-Last modified: 2019-10-25
+Last modified: 2019-10-28
 
 This script: Convert NLM journals list match list by title, two official 
 abbreviation formats, or ISSNs for print or online versions of the publication. 
@@ -41,7 +41,10 @@ data/matchfiles/JournalMatches.csv
 import pandas as pd
 import os
 
-os.chdir('/Users/name/Projects/semanticsearch')
+# Set working directory and directories for read/write
+envHome = (os.environ['HOME'])
+os.chdir(envHome + '/Projects/classifysearches')
+
 
 
 journals2df = pd.read_csv('J_Medline.txt', sep='|',
