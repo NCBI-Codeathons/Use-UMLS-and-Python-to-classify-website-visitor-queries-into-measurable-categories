@@ -58,7 +58,9 @@ from fuzzywuzzy import fuzz, process
 
 # Set working directory, read/write locations
 # CHANGE AS NEEDED
-os.chdir('/Users/name/Projects/webDS')
+envHome = (os.environ['HOME'])
+os.chdir(envHome + '/Projects/classifysearches')
+
 dataRaw = 'data/raw/search/' # Put log here before running script
 dataMatchFiles = 'data/matchFiles/' # Permanent helper files; both reading and writing required
 dataInterim = 'data/interim/search/' # Save to disk as desired, to re-start easily
