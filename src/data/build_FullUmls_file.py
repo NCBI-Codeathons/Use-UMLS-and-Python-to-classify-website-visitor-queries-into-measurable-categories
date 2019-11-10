@@ -17,6 +17,11 @@ on term length, and stacks all the semantic types when there is more than one.
 You should check the release notes to see if they changed any columns or the 
 column order.
 
+INPUTS:
+    - 
+    
+OUTPUTS:
+- umlsTermListEnglish.csv
 
 ----------------
 SCRIPT CONTENTS
@@ -100,7 +105,7 @@ del [[VariationsWithinConcept]]
 """
 #%%
 # --------------------------------------------------------------------------
-# This version does NOT limit to MeSH 
+# This version of the code will NOT limit to MeSH - all users require UMLS license agreement
 
 # Reduce to preferred atom for CUI
 atomForCui = VariationsWithinConcept.loc[(VariationsWithinConcept['TS'] == "P")]
