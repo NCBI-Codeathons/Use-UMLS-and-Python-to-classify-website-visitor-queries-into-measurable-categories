@@ -12,8 +12,11 @@ Last modified: 2019-11-04
 ------------------------------------------
 
 This script: A tool for collecting the type of "training data" that 
-machine learning requires to make this process more automated. The script
-puts your highest frequency terms into buckets/clusters, so
+machine learning requires to make this process more automated. This is the
+best way (so far) to classify the many ways your customers search for your 
+products and product-related terminology.
+
+The script puts your highest frequency terms into buckets/clusters, so
 you can use Excel to add 2 levels of aggregation, to match what the UMLS 
 terminologies are assigning: Preferred Term (preferred version of the term) and
 Semantic Type (MID-LEVEL description).
@@ -210,28 +213,35 @@ del [[SiteSearch, SearchConsole, SiteSearchResult, SearchConsoleResult]] # listT
 # ===============================================
 '''
 FuzzyWuzzy aggregates frequently occurring terms and puts them into buckets.
+Change the commented numbers based on the quality of the response you are getting.
+Depends on how people are searching your site, how many products you have, etc.
+For the pilot site we started with 10 buckets; later with 5 buckets, one bucket
+would be great and the others not useful at all.
 
 Most of this is adjustable; see:
 - https://github.com/seatgeek/fuzzywuzzy (creator site)
 - https://www.neudesic.com/blog/fuzzywuzzy-using-python/
 - https://www.datacamp.com/community/tutorials/fuzzy-string-python
 
-When running this within Phase 1
+This script uses "fuzz.ratio."
 
-NOTE: Sequential index from zero is required here.
+NOTE: The dataframe index must be sequential from zero or the code will break.
 
 query_df = query_df.iloc[0:1000]
 query_df = query_df.loc[(query_df['TotalSearchFreq'] > 5)]
+
+Score of ~70, for pilot site, allows ~1 word to be the same in ~3-word phrases;
+this is good for "grants" but bad regarding "medicine."
 '''
 
-query_df = UnmatchedAfterUmlsMesh # UnassignedAfterSS
-query_df = query_df.loc[(query_df['TotalSearchFreq'] > 3)]
+# Iterations after initial build: query_df = UnmatchedAfterJournals # UnmatchedAfterUmlsMesh UnassignedAfterSS
+query_df = query_df.loc[(query_df['TotalSearchFreq'] > 15)] # Pilot site: started at 15 and moved down
 query_df.rename(columns={'AdjustedQueryTerm': 'Query'}, inplace=True)
 
 rowCnt = len(query_df)
 queryColName = 'Query'
-n_freq = 200
-n_bucket = 20 # 10 works fine but requires many cycles
+n_freq = 200 # Max rows by frequency of occurrence (?) Was 200
+n_bucket = 10 # 10 works fine but requires many cycles
 pair = []
 whole_list = []
 bucket_init = [[]  for i in range(n_bucket)]
@@ -244,7 +254,7 @@ for i_comp1 in range(rowCnt):
     for i_comp2 in range(i_comp1+1, rowCnt):
         comp2 = query_df[queryColName][i_comp2]
         score = fuzz.ratio(comp1, comp2)
-        if (score > 75):
+        if (score > 75):       # Similarity score you want; lower is looser matching. Was 75
             whole_list.extend((i_comp1, i_comp2))
             pair.append((i_comp1,i_comp2))
 print("whole pair = ", pair)

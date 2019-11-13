@@ -5,7 +5,7 @@ Created on Thu Oct 25 09:35:31 2018
 
 @author: dan.wendling@nih.gov
 
-Last modified: 2019-10-16
+Last modified: 2019-11-11
 
 ** Search log analysis: (Re)build a local UMLS term list, ~2 times per year **
 

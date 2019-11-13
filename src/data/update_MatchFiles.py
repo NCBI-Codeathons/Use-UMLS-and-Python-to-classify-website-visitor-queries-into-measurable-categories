@@ -119,8 +119,6 @@ PastMatches.to_excel(writer,'PastMatches', index=False)
 writer.save()
 
 
-
-
 #%%
 # ============================================================
 # To update UmlsMesh.csv, such as punctuation, removing dupes
@@ -140,7 +138,7 @@ UmlsMesh = UmlsMesh.dropna(subset=['AdjustedQueryTerm'])
 # Remove all chars except a-zA-Z0-9 and leave foreign chars alone
 UmlsMesh['AdjustedQueryTerm'] = UmlsMesh['AdjustedQueryTerm'].str.replace(r'[^\w\s]+', '')
 
-# Removing punct may mean that some entries will be duplicates
+# Removing dupes if removing punct created them
 UmlsMesh = UmlsMesh.drop_duplicates(subset=['AdjustedQueryTerm'])
 
 # Sort for easier editing

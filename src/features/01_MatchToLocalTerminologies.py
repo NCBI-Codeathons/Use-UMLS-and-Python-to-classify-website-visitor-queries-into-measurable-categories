@@ -326,26 +326,48 @@ LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('[0-9]{5,}
 LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('[0-9]{4,}-[0-9]{4,}', na=False), 'PreferredTerm'] = 'Numeric ID'
 LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('Numeric ID', na=False), 'SemanticType'] = 'Numeric ID'
 
-# --- Commonly searched products or unique names --- 
+# --- Leading product names --- 
+# pubmed / pmc / medline / journals
 LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('pubmed', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('pub med', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
 LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('medline', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
 LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('journal abbreviation', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
 LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('PubMed/PMC/MEDLINE', na=False), 'SemanticType'] = 'Product-NLM'
-
+# mesh
 LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('mesh', na=False), 'PreferredTerm'] = 'MeSH'
 LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('MeSH', na=False), 'SemanticType'] = 'Product-NLM'
-
+# umls
 LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('umls', na=False), 'PreferredTerm'] = 'UMLS'
 LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('UMLS', na=False), 'SemanticType'] = 'Product-LHC-MMS-Terminologies'
-
+# rxnorm
 LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('rxnorm', na=False), 'PreferredTerm'] = 'RxNorm'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('rx norm', na=False), 'PreferredTerm'] = 'RxNorm'
 LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('RxNorm', na=False), 'SemanticType'] = 'Product-LHC-MMS-Terminologies'
-
+# snomed
 LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('snomed', na=False), 'PreferredTerm'] = 'SNOMED CT'
 LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('SNOMED CT', na=False), 'SemanticType'] = 'Product-LHC-MMS-Terminologies'
-
+# index medicus
 LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('index medicus', na=False), 'PreferredTerm'] = 'Index Medicus'
 LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('Index Medicus', na=False), 'SemanticType'] = 'Product-NLM'
+# native voices
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('medicine wheel', na=False), 'PreferredTerm'] = 'Native Voices'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('native american', na=False), 'PreferredTerm'] = 'Native Voices'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('american indian', na=False), 'PreferredTerm'] = 'Native Voices'
+LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('Native Voices', na=False), 'SemanticType'] = 'Product-LO-Exhibition'
+
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('chickasaw', na=False), 'PreferredTerm'] = 'Native Voices'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('choctaw', na=False), 'PreferredTerm'] = 'Native Voices'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('navajo', na=False), 'PreferredTerm'] = 'Native Voices'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('powhatan', na=False), 'PreferredTerm'] = 'Native Voices'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('inter caetera', na=False), 'PreferredTerm'] = 'Native Voices'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('trail of tears', na=False), 'PreferredTerm'] = 'Native Voices'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('taino', na=False), 'PreferredTerm'] = 'Native Voices'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('geronimo', na=False), 'PreferredTerm'] = 'Native Voices'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('apache', na=False), 'PreferredTerm'] = 'Native Voices'
+
+# yellow wallpaper
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('yellow wallpaper', na=False), 'PreferredTerm'] = 'The Literature of Prescription'
+LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('The Literature of Prescription', na=False), 'SemanticType'] = 'Product-LO-Exhibition'
 
 
 # -------------
@@ -364,7 +386,7 @@ RowsAssignedCnt = (LogAfterForeign['SemanticType'].values != '').sum() # .isnull
 RowsAssignedPercent = (RowsAssignedCnt / RowsTot * 100).astype(int)
 
 # print("\nTop Semantic Types\n{}".format(LogAfterForeign['SemanticType'].value_counts().head(10)))
-print("\n==========================================================\n ** LogAfterForeign: {}% of total search volume tagged **\n==========================================================\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned\n".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
+print("\n==========================================================\n ** LogAfterForeign: {}% of total search volume tagged **\n==========================================================\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
 
 
 '''
@@ -478,7 +500,7 @@ RowsAssignedCnt = (LogAfterSiteSpecific['SemanticType'].values != '').sum() # .i
 RowsAssignedPercent = (RowsAssignedCnt / RowsTot * 100).astype(int)
 
 # print("\nTop Semantic Types\n{}".format(LogAfterSiteSpecific['SemanticType'].value_counts().head(10)))
-print("\n===============================================================\n ** LogAfterSiteSpecific: {}% of total search volume tagged **\n===============================================================\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned\n".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
+print("\n===============================================================\n ** LogAfterSiteSpecific: {}% of total search volume tagged **\n===============================================================\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
 
 
 
@@ -555,7 +577,7 @@ RowsAssignedCnt = (LogAfterPastMatches['SemanticType'].values != '').sum() # .is
 RowsAssignedPercent = (RowsAssignedCnt / RowsTot * 100).astype(int)
 
 # print("\nTop Semantic Types\n{}".format(LogAfterPastMatches['SemanticType'].value_counts().head(10)))
-print("\n==============================================================\n ** LogAfterPastMatches: {}% of total search volume tagged **\n==============================================================\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned\n".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
+print("\n==============================================================\n ** LogAfterPastMatches: {}% of total search volume tagged **\n==============================================================\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
 
 
 # Separate next operations so previous matches won't be overwritten
@@ -586,7 +608,7 @@ where the person landed to help you classify the terms.
 
 # write out
 writer = pd.ExcelWriter(dataInterim + 'UnmatchedAfterPastMatches.xlsx')
-UnmatchedAfterPastMatches.to_excel(writer,'UnmatchedAfterPastMatches')
+UnmatchedAfterPastMatches.to_excel(writer,'UnmatchedAfterPastMatches', index=False)
 # df2.to_excel(writer,'Sheet2')
 writer.save()
 
@@ -598,15 +620,11 @@ writer.save()
 # 7. Exact-match to UmlsMesh
 # ====================================================================
 '''
-Optional. Attempt local exact matching against 3.7-million-term UMLS file. 
-Because of the license agreement this file will not be shared, but it is a 
-combination of MRCONSO.RFF and MRSTY.RRF that is reduced to only the 
-preferred "atom" for each concept (CUI) in the vocabulary, and each concept 
-includes its semantic type assignment(s). Saves a lot of time with the API, 
-but not necessary for the project.
+UmlsMesh is a custom-created file, with NLM's free MeSH vocabulary,
+plus UMLS Semantic Types.
 
-Restart?
-LogAfterForeign = pd.read_excel('01_Import-transform_files/LogAfterForeign.xlsx')
+The script to create the file is in src/data/, however a UMLS license
+is required to create the file.
 '''
 
 # Reviewing from above
@@ -624,7 +642,7 @@ UmlsMesh.columns
        'SAB'
 '''
 
-# Combine
+# Combine with the subset, unmatched only
 UmlsMeshMatches = pd.merge(UnmatchedAfterPastMatches, UmlsMesh, how='inner', left_on=['Search Query'], right_on=['AdjustedQueryTerm'])
 UmlsMeshMatches.columns
 '''
@@ -632,7 +650,7 @@ UmlsMeshMatches.columns
        'SemanticType', 'ui', 'LAT', 'SAB'
 '''
 
-# Join to full list
+# Join to full log
 LogAfterUmlsMesh = pd.merge(LogAfterPastMatches, UmlsMeshMatches, how='left', left_on=['AdjustedQueryTerm'], right_on=['Search Query'])
 LogAfterUmlsMesh.columns
 '''
@@ -696,7 +714,7 @@ RowsAssignedCnt = (LogAfterUmlsMesh['SemanticType'].values != '').sum() # .isnul
 RowsAssignedPercent = (RowsAssignedCnt / RowsTot * 100).astype(int)
 
 # print("\nTop Semantic Types\n{}".format(LogAfterUmlsMesh['SemanticType'].value_counts().head(10)))
-print("\n===========================================================\n ** LogAfterUmlsMesh: {}% of total search volume tagged **\n===========================================================\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned\n".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
+print("\n===========================================================\n ** LogAfterUmlsMesh: {}% of total search volume tagged **\n===========================================================\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned\nNOTE: Join creates additional rows (?).".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
 
 
 # Free up some memory
@@ -753,11 +771,25 @@ LogAfterJournals.columns
        'SemanticType'
 '''
 
+
+# Write out LogAfterJournals
+writer = pd.ExcelWriter(dataInterim + 'LogAfterJournals.xlsx')
+LogAfterJournals.to_excel(writer,'LogAfterJournals', index=False)
+# df2.to_excel(writer,'Sheet2')
+writer.save()
+
+
 # Separate next operations so previous matches won't be overwritten
 UnmatchedAfterJournals = LogAfterJournals.loc[LogAfterJournals['SemanticType'] == '']
 UnmatchedAfterJournals = UnmatchedAfterJournals[['AdjustedQueryTerm', 'TotalSearchFreq']].reset_index(drop=True)
 
-    
+# Write out
+writer = pd.ExcelWriter(dataInterim + 'UnmatchedAfterJournals.xlsx')
+UnmatchedAfterJournals.to_excel(writer,'UnmatchedAfterJournals', index=False)
+# df2.to_excel(writer,'Sheet2')
+writer.save()
+
+
 # -------------
 # How we doin?
 # -------------
@@ -774,7 +806,7 @@ RowsAssignedCnt = (LogAfterJournals['SemanticType'].values != '').sum() # .isnul
 RowsAssignedPercent = (RowsAssignedCnt / RowsTot * 100).astype(int)
 
 # print("\nTop Semantic Types\n{}".format(LogAfterJournals['SemanticType'].value_counts().head(10)))
-print("\n===========================================================\n ** LogAfterJournals: {}% of total search volume tagged **\n===========================================================\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned\n".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
+print("\n===========================================================\n ** LogAfterJournals: {}% of total search volume tagged **\n===========================================================\n\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
 
 
 # Free up some memory
@@ -782,53 +814,166 @@ del [[JournalMatches, LogAfterUmlsMesh, PastMatches, UnmatchedAfterUmlsMesh]]
 
 
 #%%
-# ==========================================================
-# 9. Add spelling suggestions from CSpell
-# ==========================================================
+
 '''
-See wiki for installation, help, etc.: 
-    https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/wiki/3.-Installing-and-running-CSpell
+Might be useful to run 00_StartUp-SiteSpecificTerms (clustering by lexical 
+similarity) over and over at this point, moving product info into 
+SiteSpecificMatches and the product area above. UNTIL your results are 
+overwhelmed by non-product data. Balance your time between classifying your 
+product-terminology searches, but also making sure that high-frequency 
+unmatched terms (top rows of UnmatchedAfterJournals) are classified -- 
+most of which are NOT visible through clustering; see below.
 
-No data yet on file size limits; 10,000 rows can be processed in around 12
-minutes on a normal workstation, whcih uses these options:
 
-cspell -I:cspell_infile.txt -si -o:cspell_result.txt
 
-The order of the file is search frequency - probably the best order to use.
 '''
 
-# You could limit by search frequency
-# CSpell_infile = UnmatchedAfterJournals.loc[(UnmatchedAfterJournals['TotalSearchFreq'] >= 4)]
-# If something is searched many times, it's probably not misspelled.
+query_df = UnmatchedAfterJournals
 
-# You could limit by eyeballing the df; would be a way to select the part of the
-# df most amenable to spelling corrections. 
-# cspell_infile = UnmatchedAfterJournals.iloc[378:2800]
-# cspell_infile = UnmatchedAfterJournals.iloc[2801:12800]
-# cspell_infile = UnmatchedAfterJournals.iloc[12800:12800]
-cspell_infile = UnmatchedAfterJournals.iloc[12801:59397]
+# Iterations after initial build: query_df = UnmatchedAfterJournals # UnmatchedAfterUmlsMesh UnassignedAfterSS
+query_df = query_df.loc[(query_df['TotalSearchFreq'] > 2)] # Pilot site: started at 15 and moved down
+query_df.rename(columns={'AdjustedQueryTerm': 'Query'}, inplace=True)
 
-# reduce to one col
-cspell_infile = cspell_infile[['AdjustedQueryTerm']]
+rowCnt = len(query_df)
+queryColName = 'Query'
+n_freq = 500 # Max rows by frequency of occurrence (?) Was 200
+n_bucket = 10 # 10 works fine but requires many cycles
+pair = []
+whole_list = []
+bucket_init = [[]  for i in range(n_bucket)]
+bucket = bucket_init
+#bucket = [[],[], [], [], []]#[[]]*n_bucket
+print("bucket = ", bucket)
+
+for i_comp1 in range(rowCnt): 
+    comp1 = query_df[queryColName][i_comp1]
+    for i_comp2 in range(i_comp1+1, rowCnt):
+        comp2 = query_df[queryColName][i_comp2]
+        score = fuzz.ratio(comp1, comp2)
+        if (score > 75):       # Similarity score you want; lower is looser matching. Was 75
+            whole_list.extend((i_comp1, i_comp2))
+            pair.append((i_comp1,i_comp2))
+print("whole pair = ", pair)
+whole_counter =  collections.Counter(whole_list)
+whole_key = whole_counter.most_common(n_freq)
+print(whole_key)
+i_end = 0
+i_cur = 0
+i = 0
+range_check = 0
+for key, value in (whole_key):
+    key_in_pre = False
+# check whether key in previous bucket
+    for j_check in range(max(range_check, i_end)):
+        if key in bucket[j_check]:
+            key_in_pre = key in bucket[j_check]
+            i_cur = j_check
+    if (i_end == 0 and (bucket[0] == [])):
+        i = 0
+        range_check = 1
+    elif ((key_in_pre)):
+        i = i_cur
+    elif (key_in_pre and i_end != 0):
+        i = i_cur
+    elif ((~key_in_pre) and (i_end < n_bucket)) :
+        i_end = i_end + 1
+        i = i_end
+    else:
+        i = 100
+# end check whether key in previous bucket        
+
+#    print("i = " , i)   
+    pair_copy = pair.copy()
+    if (i < n_bucket):
+      for i_pair in pair_copy:
+        if(key == i_pair[0]):
+            bucket[i].extend(i_pair)
+            index = pair.index((key, i_pair[1]))
+            pair.pop(index)
+        elif(key == i_pair[1]):
+            bucket[i].extend(i_pair)
+
+
+print( "set ", set(bucket[0]), set(bucket[1]), set(bucket[2]))
+
+# Results: Print to console
+for ii in range(n_bucket):
+    print("bucket ", ii, " = ", [query_df[queryColName][i_name] for i_name in set(bucket[ii])])
+
+# Results: Append to dataframe
+clusterResults = pd.DataFrame()
+clusterResults['Bucket'] = ""
+clusterResults['Query'] = ""
+
+for ii in range(n_bucket):
+    clusterResults = clusterResults.append(pd.DataFrame({'Bucket': ii, 
+                                                       'Query': [query_df[queryColName][i_name] for i_name in set(bucket[ii])]}), ignore_index=True)
+
+# Dupe off Query column so we can tinker with the dupe
+clusterResults['AdjustedQueryTerm'] = clusterResults['Query'].str.lower()
+
+# Replace hyphen with space because the below would replace with nothing
+clusterResults['AdjustedQueryTerm'] = clusterResults['AdjustedQueryTerm'].str.replace('-', ' ')
+# Remove https:// if used
+clusterResults['AdjustedQueryTerm'] = clusterResults['AdjustedQueryTerm'].str.replace('https://', '')
+
+# Remove all chars except a-zA-Z0-9 and leave foreign chars alone
+clusterResults['AdjustedQueryTerm'] = clusterResults['AdjustedQueryTerm'].str.replace(r'[^\w\s]+', '')
+
+# Mods look okay, dropping original term for now; check if problems emerge
+clusterResults.drop('Query', axis=1, inplace=True)
+
+# Add empty columns that user will type in
+clusterResults['PreferredTerm'] = ''
+clusterResults['SemanticType'] = ''
 
 # Write out
-cspell_infile.to_csv(dataInterim + 'cspell_infile.txt', encoding='utf-8', index=False)
+writer = pd.ExcelWriter('data/matchFiles/ClusterResults.xlsx')
+clusterResults.to_excel(writer,'clusterResults', index=False)
+# df2.to_excel(writer,'Sheet2')
+writer.save()
 
 
 
-# ---------------------------------------
-# NOW PROCESS THE FILE OUTSIDE OF PYTHON
-# BEFORE RESUMING WITH THE BELOW.
-# ---------------------------------------
+
+#%%
+# ==========================================================
+# 9. Manually add matches for UnmatchedAfterJournals
+# ==========================================================
+'''
+The overall goal is to tag 80 percent of your queries; this procedure allows
+you to focus on the top unmatched terms after your clustering work becomes 
+less useful.
+
+Here, tag some rows manually - high frequency terms that are NOT single-concept 
+generic terms - usually a mix between product terminology, non-organization
+resources, etc. Add results to SiteSpecificMatches if they are specific to 
+your site, or to PastMatches if they are not.
+
+ONLY focus on the small number of high-frequency terms at the top of the 
+"unmatched" file. Over time, this is one way you will learn what new concepts are 
+trending upward.
+
+Resources for this work: 
+    data/matchFiles/SemanticNetworkReference.xlsx
+    Searches at https://ii-public1.nlm.nih.gov/metamaplite/rest; get [aggp] etc., the Sem Type abbrev
+    https://www.nlm.nih.gov/research/umls/META3_current_semantic_types.html
+    Search engines might tell you what bigger entity the terminology belongs to
+'''
+
+ManualMatch = UnmatchedAfterJournals.loc[(UnmatchedAfterJournals['TotalSearchFreq'] > 15)]
+
+ManualMatch['PreferredTerm'] = ''
+ManualMatch['SemanticType'] = ''
+
+ManualMatch = ManualMatch[['TotalSearchFreq', 'AdjustedQueryTerm', 'PreferredTerm', 'SemanticType']]
+# Write out
+writer = pd.ExcelWriter(dataInterim + 'ManualMatch.xlsx')
+ManualMatch.to_excel(writer,'ManualMatch', index=False)
+# df2.to_excel(writer,'Sheet2')
+writer.save()
 
 
-
-cspellSuggestions = pd.read_csv(dataInterim + 'cspell_result.txt', sep='|') # , index_col=False, skiprows=7, 
-cspellSuggestions.columns
-
-# Drop rows where input and output are the same
-# https://stackoverflow.com/questions/43951558/remove-rows-that-two-columns-have-the-same-values-by-pandas
-cspellSuggestions = cspellSuggestions[cspellSuggestions['AdjustedQueryTerm'] != cspellSuggestions['adjusted query term']]
 
 
 
@@ -983,7 +1128,7 @@ viewRows = combinedLogs[10000:11000]
 
 # Save to file so you can open in future sessions
 writer = pd.ExcelWriter(dataInterim + 'combinedLogs.xlsx')
-combinedLogs.to_excel(writer,'combinedLogs')
+combinedLogs.to_excel(writer,'combinedLogs', index=False)
 # df2.to_excel(writer,'Sheet2')
 writer.save()
 '''
