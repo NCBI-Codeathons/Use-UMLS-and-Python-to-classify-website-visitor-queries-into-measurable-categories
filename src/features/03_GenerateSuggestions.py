@@ -7,22 +7,35 @@ Created on Thu Oct 24 09:53:59 2019
 
 Last modified: 2019-11-18
 
+------------------------------------------------------
+ ** Semantic Search Analysis: Generate suggestions **
+------------------------------------------------------
 
-** Search query analyzer, Part 3 **
+This script: For items that were not matched, derive "ListToCheck" - the highest 
+frequency unmatched terms, that you have time to work on, and then generate 
+options from MetaMap Lite, CSpell and FuzzyWuzzy. Now that the safe bets have 
+been tagged and removed from view, let's allow more liberal guessing and use 
+human review to resolve SOME trickier tagging.
 
-This script: For items that were not matched, derive "ListToCheck," highest 
-frequency unmatched, and generate options from MetaMap, CSpell and FuzzyWuzzy.
-Now that the safe bets have been taken out, let's allow more liberal guesses 
-and resolve some tagging using human review.
-
-THIS SCRIPT MUST BE RUN MANUALLY.
+RECOMMENDATION: Run the processes for MetaMap and CSpell, put the output files
+in place, then run this entire script at once.
 
 Consider how much work will benefit you. Solving 75-80% of your total search 
 volume, might be the limit to what you can accomplish in a reasonable amount 
-of time. Terms with multiple searches are more likely to be real things, such 
+of time. Terms with multiple requests are more likely to be real things, such 
 as terms from web site pages. Items searched only once or twice may not have 
-enough information for classification. Real example: "halloween genetics". ??
+enough information for classification. Real examples: "halloween genetics"; 
+"yoga nutrition". ??
 
+INPUTS:
+    - data/interim/UnmatchedAfterMetathesaurus.xlsx (or current file of unmatched)
+    - data/interim/result_mm.txt
+    - data/interim/result_cspell.txt
+    - data/matchFiles/SemanticNetworkReference.xlsx
+
+OUTPUTS:
+    - data/interim/03_suggestions.xlsx
+    
 
 ----------------
 SCRIPT CONTENTS
@@ -33,6 +46,7 @@ SCRIPT CONTENTS
 3. Build suggestions from CSpell spelling checker, suggestionsFromCSpell
 4. Build suggestions from FuzzyWuzzy, suggestionsFromFuzzyLoose
 5. Unite all suggestions into one Excel file for manual work
+6. Update multiple resources, re-run Phase 1, etc.
 """
 
 
@@ -128,7 +142,7 @@ Go to the terminal / command line and run mmlrestclient.py, like this:
 
 cd ~/Projects/classifysearches/data/interim
 
-python mmlrestclient.py https://ii-public1.nlm.nih.gov/metamaplite/rest/annotate SuggestionsNeeded.txt --output mm_outfile.txt
+python mmlrestclient.py https://ii-public1.nlm.nih.gov/metamaplite/rest/annotate SuggestionsNeeded.txt --output result_mm.txt
 '''
 
 
@@ -143,22 +157,71 @@ C0037354: smallpox: Smallpox : [dsyn]: [LCH, NCI_NICHD, MTH, CHV, CSP, MSH, MEDL
 Described at https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/wiki/4.-Understanding-MetaMap-output
 '''
 
-colList = ['tempID', 'Score', 'PreferredName', 'CUI', 'SemTypeList']
-mmOutput = pd.read_csv(dataInterim + 'mm_outfile.txt', sep='|', usecols=[0,2,3,4,5], names=colList)
+mmCols = ['tempID', 'Score', 'SuggestedTerm', 'CUI', 'SemTypeList']
+result_mm = pd.read_csv(dataInterim + 'result_mm.txt', sep='|', usecols=[0,2,3,4,5], names=mmCols)
 
 # Join
-suggestionsFromMM = pd.merge(ListToCheck, mmOutput, how='left', on=['tempID'])
+suggestionsFromMM = pd.merge(ListToCheck, result_mm, how='left', on=['tempID'])
 suggestionsFromMM.columns
 '''
-'tempID', 'AdjustedQueryTerm', 'Score', 'PreferredName', 'CUI',
+'tempID', 'AdjustedQueryTerm', 'Score', 'SuggestedTerm', 'CUI',
        'SemTypeList'
 '''
 
 # Drop
 suggestionsFromMM.drop(['tempID'], axis=1, inplace=True)
+suggestionsFromMM = suggestionsFromMM.dropna(subset=['SuggestedTerm'])
 
-# Add source info
+# Add source col
 suggestionsFromMM['Source'] = 'MetaMap'
+
+# Make SemTypeList content look like SemanticNetworkReference.SemanticTypeAbr
+suggestionsFromMM['SemTypeList'] = suggestionsFromMM['SemTypeList'].str.replace(', ', '|')
+suggestionsFromMM['SemTypeList'] = suggestionsFromMM['SemTypeList'].str.replace('\[', '')
+suggestionsFromMM['SemTypeList'] = suggestionsFromMM['SemTypeList'].str.replace('\]', '')
+
+# Bring in Sem Type info
+SemTypes = pd.read_excel(dataMatchFiles + 'SemanticNetworkReference.xlsx')
+# Reduce to join cols
+SemTypes = SemTypes[['SemanticTypeAbr', 'SemanticType']]
+# dropna
+SemTypes = SemTypes.dropna(subset=['SemanticTypeAbr'])
+
+# Join
+suggestionsFromMM2 = pd.merge(suggestionsFromMM, SemTypes, how='left', left_on='SemTypeList', right_on='SemanticTypeAbr')
+suggestionsFromMM2.columns
+'''
+'AdjustedQueryTerm', 'Score', 'SuggestedTerm', 'CUI', 'SemTypeList',
+       'Source', 'SemanticTypeAbr', 'SemanticType'
+'''
+
+# Some combo types are not in SemanticNetworkReference
+# Pull out nulls
+fixSem = suggestionsFromMM2[suggestionsFromMM2['SemanticType'].isnull()]
+# Dupe off col
+fixSem['SemanticType'] = fixSem['SemTypeList']
+
+# Move abbreviation into index
+SemTypes.set_index('SemanticTypeAbr', inplace=True)
+
+# Find and replace within fixSem using SemTypes df
+for key, value in SemTypes.iterrows():
+    currKey = key
+    currST = value['SemanticType']
+    fixSem['SemanticType'] = fixSem['SemanticType'].str.replace(currKey, currST)
+  
+#  drop na from main df
+suggestionsFromMM2 = suggestionsFromMM2.dropna(subset=['SemanticType'])
+
+# append the new content
+suggestionsFromMM2 = suggestionsFromMM2.append([fixSem])
+
+# drop abbrev cols
+suggestionsFromMM2.drop(['SemanticTypeAbr', 'SemTypeList'], axis=1, inplace=True)
+suggestionsFromMM2 = suggestionsFromMM2.reset_index(drop=True)
+
+
+del [[result_mm, suggestionsFromMM, fixSem]]
 
 
 #%%
@@ -176,7 +239,7 @@ Specifically, https://lsg3.nlm.nih.gov/LexSysGroup/Projects/cSpell/current/web/d
 No data yet on file size limits; 10,000 rows can be processed in around 12
 minutes on a normal workstation, which uses these options:
 
-cspell -I:cspell_infile.txt -si -o:cspell_result.txt
+cspell -I:cspell_infile.txt -si -o:result_cspell.txt
 
 A 30,000-row file was processed in around 1 hour. RECOMMENDATION: Limit size 
 to what fits into your available work time. Here we use the same highest-freq
@@ -198,7 +261,7 @@ Run from terminal command line; location similar to:
     
 cd C:\tools\cSpell2018\bin
 
-cspell -i:SuggestionsNeeded.txt -si -o:cspell_result.txt
+cspell -i:SuggestionsNeeded.txt -si -o:result_cspell.txt
 '''
 
 
@@ -206,34 +269,21 @@ cspell -i:SuggestionsNeeded.txt -si -o:cspell_result.txt
 # Merge source and result into one df
 # ------------------------------------
 
-suggestionsFromCSpell = pd.read_csv(dataInterim + 'cspell_resultsFull.txt', sep='|') # , index_col=False, skiprows=7, 
-suggestionsFromCSpell.columns
+cspellCols = ['AdjustedQueryTerm', 'SuggestedTerm']
+result_cspell = pd.read_csv(dataInterim + 'result_cspell.txt', sep='|', index_col=False, usecols=[1,3], names=cspellCols)  # skiprows=7, 
+result_cspell.columns
 '''
-'AdjustedQueryTerm', 'adjusted query term'
+'AdjustedQueryTerm', 'SuggestedTerm'
 '''
 
 # Drop rows where input and output are the same
 # https://stackoverflow.com/questions/43951558/remove-rows-that-two-columns-have-the-same-values-by-pandas
-suggestionsFromCSpell = suggestionsFromCSpell[suggestionsFromCSpell['AdjustedQueryTerm'] != suggestionsFromCSpell['adjusted query term']]
+suggestionsFromCSpell = result_cspell[result_cspell['AdjustedQueryTerm'] != result_cspell['SuggestedTerm']]
 
-# Prep destination column in log
-suggestionsFromCSpell.rename(columns={'adjusted query term': 'cspell'}, inplace=True)
-
-# Join to full list
-suggestionsFromCSpell = pd.merge(suggestionsFromCSpell, ListToCheck, how='inner', on='AdjustedQueryTerm')
-suggestionsFromCSpell.columns
-'''
-'tempID', 'AdjustedQueryTerm', 'cspell'
-'''
-
-# Drop dupes
-suggestionsFromCSpell = suggestionsFromCSpell.drop_duplicates(subset=['AdjustedQueryTerm'], keep='last')
-
-# Drop
-suggestionsFromCSpell.drop(['tempID'], axis=1, inplace=True)
-
-# Add source info
+# Add source col
 suggestionsFromCSpell['Source'] = 'CSpell'
+
+del [[result_cspell]]
 
 
 #%%
@@ -275,28 +325,54 @@ Re-start:
 uniqueUnassignedAfterStep2 = pd.read_excel(dataInterim + 'uniqueUnassignedAfterStep2.xlsx')
 '''
 
+# -----
+# Prep
+# -----
 
-# Bring in and combine existing match files: SiteSpecificMatches, PastMatches
+# Bring in
+SiteSpecificMatches = pd.read_excel(dataMatchFiles + 'SiteSpecificMatches.xlsx')
+SiteSpecificMatches.columns
+'''
+'AdjustedQueryTerm', 'PreferredTerm', 'SemanticType'
+'''
+
+# Bring in
+PastMatches = pd.read_excel(dataMatchFiles + 'PastMatches.xlsx')
+PastMatches.columns
+'''
+'SemanticType', 'AdjustedQueryTerm', 'PreferredTerm', 'ui'
+'''
+
+# Append
+TermsInUseFull = SiteSpecificMatches.append([PastMatches])
+
+# Reduce
+TermsInUseList = TermsInUseFull[['AdjustedQueryTerm']]
+
+# Dedupe
+TermsInUseList = TermsInUseList.drop_duplicates(subset=['AdjustedQueryTerm'], keep='first')    
+
+del [[SiteSpecificMatches, PastMatches]] # free memory
 
 
-# Match to our unmatched list, ListToCheck
+# ------------------------------------
+# Fuzzy match using fuzz.ratio
+# ------------------------------------
 
-
-
+# Compare ListToCheck to TermsInUseList
 def fuzzy_match(x, choices, scorer, cutoff):
     return process.extractOne(
         x, choices=choices, scorer=scorer, score_cutoff=cutoff
     )
 
 # Create series FuzzyWuzzyResults
-FuzzyWuzzyProcResult1 = fuzzySourceZ.loc[:, 'AdjustedQueryTerm'].apply(
+FuzzyWuzzyProcResult1 = ListToCheck.loc[:, 'AdjustedQueryTerm'].apply(
         fuzzy_match,
-    args=( PastMatches.loc[:, 'AdjustedQueryTerm'],
+    args=( TermsInUseList.loc[:, 'AdjustedQueryTerm'],
             fuzz.ratio,
             75 # Items must have this score or higher to appear in the results
         )
 )
-
 
 # Convert FuzzyWuzzyResults Series to df
 FuzzyWuzzyProcResult2 = pd.DataFrame(FuzzyWuzzyProcResult1)
@@ -309,36 +385,37 @@ FuzzyWuzzyProcResult2 = FuzzyWuzzyProcResult2.rename(columns={'index': 'FuzzyInd
 FuzzyWuzzyProcResult2 = FuzzyWuzzyProcResult2[FuzzyWuzzyProcResult2.AdjustedQueryTerm.notnull() == True] # remove nulls
 
 # Move tuple output into 3 cols
-FuzzyWuzzyProcResult2[['ProbablyMeantGSTerm', 'FuzzyScore', 'PastMatchesIndex']] = FuzzyWuzzyProcResult2['AdjustedQueryTerm'].apply(pd.Series)
+FuzzyWuzzyProcResult2[['SuggestedTerm', 'Score', 'TermsInUseListIndex']] = FuzzyWuzzyProcResult2['AdjustedQueryTerm'].apply(pd.Series)
 FuzzyWuzzyProcResult2.drop(['AdjustedQueryTerm'], axis=1, inplace=True) # drop tuples
 
 # Merge result to the orig source list cols
-FuzzyWuzzyProcResult3 = pd.merge(FuzzyWuzzyProcResult2, fuzzySourceZ, how='left', left_index=True, right_index=True)
+FuzzyWuzzyProcResult3 = pd.merge(FuzzyWuzzyProcResult2, ListToCheck, how='left', left_index=True, right_index=True)
 FuzzyWuzzyProcResult3.columns
-# 'FuzzyIndex', 'GSPrefTerm', 'FuzzyScore', 'PastMatchesIndex', 'AdjustedQueryTerm', 'timesSearched'
-       
-# Change col order for browsability if you want to analyze this by itself
-FuzzyWuzzyProcResult3 = FuzzyWuzzyProcResult3[['AdjustedQueryTerm', 'ProbablyMeantGSTerm', 'FuzzyScore', 'timesSearched', 'FuzzyIndex', 'PastMatchesIndex']]
-
-# Merge result to PastMatches supplemental info
-FuzzyWuzzyProcResult4 = pd.merge(FuzzyWuzzyProcResult3, PastMatches, how='left', left_on='ProbablyMeantGSTerm', right_on='AdjustedQueryTerm')
-FuzzyWuzzyProcResult4.columns
 '''
-'AdjustedQueryTerm_x', 'ProbablyMeantGSTerm', 'FuzzyScore',
-       'timesSearched', 'FuzzyIndex', 'PastMatchesIndex', 'SemanticType',
-       'AdjustedQueryTerm_y', 'preferredTerm', 'ui'
+'FuzzyIndex', 'SuggestedTerm', 'Score', 'TermsInUseListIndex',
+       'tempID', 'AdjustedQueryTerm'
+'''       
+
+# Reduce/re-order
+suggestionsFromFuzzyWuzzy = FuzzyWuzzyProcResult3[['AdjustedQueryTerm', 'SuggestedTerm', 'Score']]
+
+# Add source info
+suggestionsFromFuzzyWuzzy['Source'] = 'FuzzyWuzzy'
+
+
+# In case the suggestion is correct, get PreferredTerm and Sem Type 
+suggestionsFromFuzzyWuzzy2 = pd.merge(suggestionsFromFuzzyWuzzy, TermsInUseFull, how='left', left_on=['SuggestedTerm'], right_on='AdjustedQueryTerm')
+suggestionsFromFuzzyWuzzy2.columns
+'''
+'AdjustedQueryTerm_x', 'SuggestedTerm', 'Score', 'Source',
+       'AdjustedQueryTerm_y', 'PreferredTerm', 'SemanticType', 'ui'
 '''
 
-# Reduce and rename. AdjustedQueryTerm_y is now redundant; okay to drop
-FuzzyWuzzyProcResult4 = FuzzyWuzzyProcResult4[['ui', 'AdjustedQueryTerm_x', 
-                                               'preferredTerm', 'ProbablyMeantGSTerm', 
-                                               'SemanticType', 'timesSearched', 
-                                               'FuzzyScore']]
-FuzzyWuzzyProcResult4 = FuzzyWuzzyProcResult4.rename(columns={'AdjustedQueryTerm_x': 'AdjustedQueryTerm',
-                                                              'ProbablyMeantGSTerm': 'FuzzyToken'})
+# drop _y and rename _x
+suggestionsFromFuzzyWuzzy2.drop(['AdjustedQueryTerm_y'], axis=1, inplace=True)
+suggestionsFromFuzzyWuzzy2.rename(columns={'AdjustedQueryTerm_x': 'AdjustedQueryTerm'}, inplace=True)
 
-
-
+# del [[]]
 
 
 #%%
@@ -346,6 +423,61 @@ FuzzyWuzzyProcResult4 = FuzzyWuzzyProcResult4.rename(columns={'AdjustedQueryTerm
 # 5. Unite all suggestions into one Excel file for manual work
 # =============================================================
 '''
-
+Append into one table and prep for manual work.
 '''
+
+# Append into one df
+suggestions = suggestionsFromMM2.append([suggestionsFromCSpell, suggestionsFromFuzzyWuzzy2])
+suggestions.columns
+'''
+'AdjustedQueryTerm', 'CUI', 'Score', 'SemanticType', 'Source',
+       'SuggestedTerm'
+'''
+
+
+# Add frequency from unmatchedTerms
+unmatchedTerms = pd.read_excel(dataInterim + 'UnmatchedAfterMetathesaurus.xlsx')
+unmatchedTerms.columns
+'''
+'AdjustedQueryTerm', 'TotalSearchFreq'
+'''
+
+# Join
+suggestions2 = pd.merge(suggestions, unmatchedTerms, how='left', left_on=['AdjustedQueryTerm'], right_on='AdjustedQueryTerm')
+suggestions2.columns
+'''
+'AdjustedQueryTerm', 'SuggestedTerm', 'SemanticType', 'CUI', 'Score',
+       'Source', 'TotalSearchFreq'
+'''
+
+# Adjust
+suggestions2 = suggestions2[['TotalSearchFreq', 'AdjustedQueryTerm', 'SuggestedTerm', 'SemanticType', 'CUI', 'Source', 'Score']]
+suggestions2 = suggestions2.sort_values(by=['TotalSearchFreq', 'AdjustedQueryTerm', 'SemanticType'], ascending=[False,True,True])
+suggestions2 = suggestions2.reset_index(drop=True)
+
+
+del [[ListToCheck, SemTypes, suggestions, suggestionsFromCSpell, suggestionsFromFuzzyWuzzy, 
+      suggestionsFromFuzzyWuzzy2, suggestionsFromMM2, unmatchedTerms]]
+# SemanticNetworkReference, TermsInUse, 
+
+
+#%%
+# =============================================================
+# 6. Update multiple resources, re-run Phase 1, etc.
+# =============================================================
+'''
+Some terms should be added to the match files; do this work and re-run Phase 1.
+
+For now we have to do this manually.
+
+A wireframe for a suggestion-selector user interface is in the GitHub wiki.
+
+Do what you have time for.
+'''
+
+# Write out
+writer = pd.ExcelWriter(dataInterim + '03_suggestions.xlsx')
+suggestions2.to_excel(writer,'Suggestions', index=False)
+# df2.to_excel(writer,'Sheet2')
+writer.save()
 

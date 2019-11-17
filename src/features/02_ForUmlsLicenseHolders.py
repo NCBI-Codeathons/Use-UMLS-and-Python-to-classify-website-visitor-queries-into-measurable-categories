@@ -5,7 +5,7 @@ Created on Thu Jun 28 15:33:33 2018
 
 @authors: dan.wendling@nih.gov
 
-Last modified: 2019-11-11
+Last modified: 2019-11-18
 
 ---------------------------------------------------
  ** Semantic Search Analysis: Metathesaurus API **
@@ -13,15 +13,16 @@ Last modified: 2019-11-11
 
  - For UMLS license holders -
  
-Purpose: Run unmatched search queries against the UMLS Metathesaurus API, 
-which has a lexical toolset specific to biomedicine.
+This script: Run unmatched search queries against the UMLS Metathesaurus https
+API, which has many vocabularies and a lexical toolset specific to biomedicine. 
+This script uses normalized string matching, which is conservative enough to 
+assume that almost all the matches returned, are correct. Some clean-up will 
+be needed later in your PastMatches file.
 
-Because a UMLS license is required, you can skip this step if you want. 
-If the MetaMap output is too verbose, you can revisit this.
-
-This script uses normalized string matching, which is conservative
-enough to assume that almost all the matches returned, are correct. Some 
-clean-up will be needed later in your PastMatches file.
+You can skip this step if you don't have a (free) UMLS license and don't 
+want to get one now. This step can be integrated later if you find you 
+aren't satisfied with the percentage of search volume you are able to tag 
+(the pilot project aimed for 80 percent).
 
 
 ----------------
