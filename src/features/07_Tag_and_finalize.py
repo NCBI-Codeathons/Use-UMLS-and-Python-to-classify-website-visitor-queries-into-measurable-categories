@@ -278,7 +278,8 @@ writer.save()
 # 2. Add custom tags, if any - CustomTags.xlsx
 # =============================================
 '''
-Here, the example of opiods.
+Custom1: Opiods
+Custom2: Vaping
 
 Precise matching, not very useful; not forgiving of alternative spellings, etc.
 logWithCustomTags = pd.merge(newlyProcessedRaw, CustomTags, how='left', on='adjustedQueryTerm')
