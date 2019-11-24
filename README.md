@@ -18,7 +18,9 @@ Search represents the direct expression of our visitors’ intent. We should use
 
 ## Pilot project results
 
-72% of search volume (for October 2019) is tagged within 3 minutes, after multiple iterations that updated the tagging files; 205,633 of 282,387 searches (72%) tagged and (because the logs are already aggregated) 30,604 of 89,476 rows (34%) tagged.
+72% of search volume (for October 2019) is tagged within 3 minutes, after multiple iterations that updated the tagging files; 205,633 of 282,387 searches (72%) tagged and (because the logs are already aggregated) 30,604 of 89,476 rows (34%) tagged. What are untagged are terms searched less than a monthly average of once per day, that are multiple-concept searches.
+
+During the pilot we did not add supplemental data for MetaMapLite or CSpell. This would improve results. 
 
 
 ## Screenshots
@@ -36,24 +38,23 @@ Only partially implemented during this Codeathon.
 
 ## Dependencies
 
-### Pre-Processing tools
+### Tools
 
-* [MetaMap JAVA API](https://metamap.nlm.nih.gov/JavaApi.shtml)
-* (Linux startup script)
-* [CSpell - Spell checker for consumer language](https://lsg3.nlm.nih.gov/LexSysGroup/Projects/cSpell/current/web/index.html)
 * Python
 ** Pandas
-** scikit-learn's K-Nearest Neighbors
 ** FuzzyWuzzy for fuzzy matching and clustering
 ** Matplotlib
 ** Flask
+** Optional: Linux UI
 ** Optional: Django if assistance in manual matching is needed.
+* [MetaMap JAVA API](https://metamap.nlm.nih.gov/JavaApi.shtml)
+* [CSpell - Spell checker for consumer language](https://lsg3.nlm.nih.gov/LexSysGroup/Projects/cSpell/current/web/index.html)
 
 Yet to be integrated; may be useful:
 
-* List of abbreviations for *[Journals cited in PubMed](https://www.nlm.nih.gov/bsd/serfile_addedinfo.html);* file in this GitHub repository: J_Medline.txt
 - Medical language abbreviations
-- Natural Language Processing Tool Kit (NLTK) Python package: delete some punctuation, delete strings that appear to be numeric database IDs, limit to trigrams, English stopwords.
+- Scikit-Learn multi-class classifier
+
 
 ## Additional output
 
@@ -62,8 +63,8 @@ Search Strings input used for MetaMap and FuzzyWuzzy
 
 ## Future work
 
-- Implement pre-processing procedures to tag numeric IDs, foreign languages, bibliographic entities (journal names, document titles, etc.)
-- Implement post-processing procedures to surface untagged queries above a frequently threshold, and facilitate their manual tagging so they will be automatically tagged in the future
+- Implement tagging interface that provides suggestions for untagged queries above a frequently threshold, to facilitate manual tagging.
+
 
 ## Influences and thanks
 
@@ -71,7 +72,8 @@ Search Strings input used for MetaMap and FuzzyWuzzy
 * McCray AT, Burgun A, Bodenreider O. (2001). [Aggregating UMLS semantic types for reducing conceptual complexity](https://www.ncbi.nlm.nih.gov/pubmed/?term=11604736). Stud Health Technol Inform. 84(Pt 1):216-20. PMID: 11604736. See also https://semanticnetwork.nlm.nih.gov/
 * Lai KH, Topaz M, Goss FR, Zhou L. (2015). [Automated misspelling detection and correction in clinical free-text records. J Biomed Inform](https://www.ncbi.nlm.nih.gov/pubmed/?term=25917057%5Buid%5D). Jun;55:188-95. Epub 2015 Apr 24. PMID: 25917057. doi: 10.1016/j.jbi.2015.04.008.
 * Lu C, Aronson AR, Shooshan SE, Demner-Fushman D. (2019). Spell checker for consumer language (CSpell) Journal of the American Medical Informatics Association. Mar;26:3:211-218. PMID: 30668712. doi: https://doi.org/10.1093/jamia/ocy171. 
-* Thanks to NCBI Codeathon staff and participants; NLM-PSD-RWS Management; 2017 HHS Data Science CoLab Bootcamp (HHS-CTO and participants); MetaMap and UMLS staff; OCCS/AB Research & Development; OCCS Desktop Support; Data Society staff; many reviewers.
+* Thanks to NCBI Codeathon staff and participants; NLM-PSD-RWS Management; 2017 HHS Data Science CoLab Bootcamp (HHS-CTO and participants); MetaMap and UMLS staff; OCCS Desktop Support; Data Society staff; many reviewers.
+
 
 ## People
 
