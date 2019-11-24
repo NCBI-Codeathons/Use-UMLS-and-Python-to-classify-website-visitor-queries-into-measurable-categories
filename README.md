@@ -8,11 +8,17 @@ Analytics data for *search* for large web sites is often too verbose and inharmo
 
 Search represents the direct expression of our visitors’ intent. We should use this data to improve our staff’s awareness of what customers need from us. 
 
+
 ## Use cases
 
 1. A web analyst could say to a product owner, "Did you know that last month, 30 percent of your home page searches were in some way about drugs? Should we take action on this? How might we **improve task completion** and **reduce time on task,** for this type of information need?
 2. We should cluster and analyze **trends we know about.** For multi-faceted topics that directly relate to our mission, we should create customized analyses to collect the disparate keywords people might search for into a single bucket. How can we create a better match between user interest and our content? Where might we improve our site structure and navigation? 
 3. We should focus staff work on **new trends, as the trends emerge.** When something new starts to happen that can be matched to our mission statement, we should deploy social media posts on the new topic immediately, and start new content projects to address the emerging information need.
+
+
+## Pilot project results
+
+72% of search volume (for October 2019) is tagged within 3 minutes, after multiple iterations that updated the tagging files; 205,633 of 282,387 searches (72%) tagged and (because the logs are already aggregated) 30,604 of 89,476 rows (34%) tagged.
 
 
 ## Screenshots
