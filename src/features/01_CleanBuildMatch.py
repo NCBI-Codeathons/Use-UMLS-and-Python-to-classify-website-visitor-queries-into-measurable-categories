@@ -12,8 +12,7 @@ Last modified: 2019-11-18
 ------------------------------------------
 
 This script: Import search queries from Google Analytics, clean up, 
-match query entries against historical files. This is the only script of the 
-set that can be run without human intervention. If desired.
+match query entries against historical files.
 
 INPUTS:
 - data/raw/SearchConsoleNew.csv - log of google.com search results where person landed on your site
@@ -34,17 +33,18 @@ HOW TO EXPORT YOUR SOURCE DATA
 -------------------------------
 
 Script assumes Google Analytics where search logging has been configured. Can
-be adapted for other tools. This method avoids personally identifiable information.
+be adapted for other tools. This method AVOIDS personally identifiable 
+information ENTIRELY.
 
-    1. Go to Acquisition > Search Console > Queries
-    2. Set date parameters (Consider 1 month)
+    1. Set date parameters (Consider 1 month)
+    2. Go to Acquisition > Search Console > Queries
     3. Select Export > Unsampled Report as SearchConsoleNew.csv
     4. Copy the result to data/raw folder
     5. Do the same from Behavior > Site Search > Search Terms with file name
         SiteSearchNew.csv
         
-(You could also use the separate Google Search Console interface, but this
-requires more configuration than is covered here.)
+(You could also use the separate Google Search Console interface, which 
+has advantages, but this is a faster start.)
 
 
 ----------------
@@ -55,11 +55,21 @@ SCRIPT CONTENTS
 2. Create dataframe from query log; globally update columns and rows
 3. Assign terms with non-English characters to ForeignUnresolved
 4. Make special-case assignments with F&R, RegEx: Bibliographic, Numeric, Named entities
-5. Exact-match to site-specific and vetted past matches
-6. Eyeball results; manually classify remaining "brands" into SiteSpecificMatches
-7. Exact-match to UmlsMesh
-8. Exact match to journal file (necessary for pilot site)
-9. Spell check with CSpell
+5. Ignore everything except one program/product/service term
+6. Exact-match to site-specific and vetted past matches
+7. Eyeball results; manually classify remaining "brands" into SiteSpecificMatches
+8. Exact-match to UmlsMesh
+9. Exact match to journal file (necessary for pilot site)
+10. Spell check with CSpell
+
+
+As you customize the code for your own site:
+    
+- Use item 5 for brands when the brand is the most important thing
+- Use item 6 - SiteSpecificMatches for things that are specific to your site; 
+  things your site has, but other sites don't.
+- Use item 6 - PastMatches, for generic terms that would be relevant
+  to any health-medical site.
 """
 
 
@@ -79,6 +89,11 @@ import numpy as np
 import os
 import re
 import string
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+import collections
+import copy
+
 
 # Set working directory and directories for read/write
 home_folder = os.path.expanduser('~')
@@ -326,50 +341,6 @@ LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('[0-9]{5,}
 LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('[0-9]{4,}-[0-9]{4,}', na=False), 'PreferredTerm'] = 'Numeric ID'
 LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('Numeric ID', na=False), 'SemanticType'] = 'Numeric ID'
 
-# --- Leading product names --- 
-# pubmed / pmc / medline / journals
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('pubmed', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('pub med', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('medline', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('journal abbreviation', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
-LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('PubMed/PMC/MEDLINE', na=False), 'SemanticType'] = 'Product-NLM'
-# mesh
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('mesh', na=False), 'PreferredTerm'] = 'MeSH'
-LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('MeSH', na=False), 'SemanticType'] = 'Product-NLM'
-# umls
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('umls', na=False), 'PreferredTerm'] = 'UMLS'
-LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('UMLS', na=False), 'SemanticType'] = 'Product-LHC-MMS-Terminologies'
-# rxnorm
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('rxnorm', na=False), 'PreferredTerm'] = 'RxNorm'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('rx norm', na=False), 'PreferredTerm'] = 'RxNorm'
-LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('RxNorm', na=False), 'SemanticType'] = 'Product-LHC-MMS-Terminologies'
-# snomed
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('snomed', na=False), 'PreferredTerm'] = 'SNOMED CT'
-LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('SNOMED CT', na=False), 'SemanticType'] = 'Product-LHC-MMS-Terminologies'
-# index medicus
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('index medicus', na=False), 'PreferredTerm'] = 'Index Medicus'
-LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('Index Medicus', na=False), 'SemanticType'] = 'Product-NLM'
-# native voices
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('medicine wheel', na=False), 'PreferredTerm'] = 'Native Voices'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('native american', na=False), 'PreferredTerm'] = 'Native Voices'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('american indian', na=False), 'PreferredTerm'] = 'Native Voices'
-LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('Native Voices', na=False), 'SemanticType'] = 'Product-LO-Exhibition'
-
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('chickasaw', na=False), 'PreferredTerm'] = 'Native Voices'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('choctaw', na=False), 'PreferredTerm'] = 'Native Voices'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('navajo', na=False), 'PreferredTerm'] = 'Native Voices'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('powhatan', na=False), 'PreferredTerm'] = 'Native Voices'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('inter caetera', na=False), 'PreferredTerm'] = 'Native Voices'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('trail of tears', na=False), 'PreferredTerm'] = 'Native Voices'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('taino', na=False), 'PreferredTerm'] = 'Native Voices'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('geronimo', na=False), 'PreferredTerm'] = 'Native Voices'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('apache', na=False), 'PreferredTerm'] = 'Native Voices'
-
-# yellow wallpaper
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('yellow wallpaper', na=False), 'PreferredTerm'] = 'The Literature of Prescription'
-LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('The Literature of Prescription', na=False), 'SemanticType'] = 'Product-LO-Exhibition'
-
-
 # -------------
 # How we doin?
 # -------------
@@ -389,28 +360,121 @@ RowsAssignedPercent = (RowsAssignedCnt / RowsTot * 100).astype(int)
 print("\n==========================================================\n ** LogAfterForeign: {}% of total search volume tagged **\n==========================================================\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
 
 
+#%%
+# =============================================================
+# 5. Ignore everything except one program/product/service term
+# =============================================================
+'''
+USE CAREFULLY, when part of a search term is IMPORTANT ENOUGH TO OVERRIDE 
+EVERYTHING ELSE in the term. Often this is a "brand," but it can also be 
+terminology that is only associated with a specific program/product/service. 
+Example uses: 
+    - You want to view all the ways customers are trying to get to the home 
+      page of a program, product or service.
+    - You are noticing that perhaps a specific entity should be more 
+      visible within your site navigation and you want to understand the 
+      issue better.
+
+TODO - Update this to a function that is fed by a file.
 '''
 
-
-TotQueriesAssigned = TotQueriesAssigned[LogAfterForeign['SemanticType'] != '' = True]
-
-
-RowCountLeftToSolve = 
+LogAfterOverride = LogAfterForeign
 
 
-.sum() # .notnull().sum()
+# ----------------------
+# Product-NLM-NCBI
+# ----------------------
+
+# blast
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('blast', na=False), 'PreferredTerm'] = 'BLAST'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('BLAST', na=False), 'SemanticType'] = 'Product-NLM-NCBI'
 
 
+# ----------------------
+# Product-NLM-LO-HMD
+# ----------------------
 
-TotUniqueEntries = LogAfterForeign['AdjustedQueryTerm'].nunique()
+# index cat
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('index cat', na=False), 'PreferredTerm'] = 'IndexCat'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('IndexCat', na=False), 'SemanticType'] = 'Product-NLM-LO-HMD'
 
-Assigned = 
-PercentAssigned = (Assigned / TotUniqueEntries * 100).astype(int)
-'''
+# native voices
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('native voices', na=False), 'PreferredTerm'] = 'Native Voices'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('Native Voices', na=False), 'SemanticType'] = 'Product-NLM-LO-HMD-Exhibition'
+
+# yellow wallpaper
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('yellow wallpaper', na=False), 'PreferredTerm'] = 'The Literature of Prescription'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('The Literature of Prescription', na=False), 'SemanticType'] = 'Product-NLM-LO-HMD-Exhibition'
+
+
+# ----------------------
+# Product-NLM-LO-MMS
+# ----------------------
+
+# mesh
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('mesh', na=False), 'PreferredTerm'] = 'MeSH'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('MeSH', na=False), 'SemanticType'] = 'Product-NLM'
+
+
+# ----------------------
+# Product-NLM-LO-PSD
+# ----------------------
+# docline
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('docline', na=False), 'PreferredTerm'] = 'DOCLINE'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('DOCLINE', na=False), 'SemanticType'] = 'Product-NLM-LO-PSD'
+# toxtutor
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('toxtutor', na=False), 'PreferredTerm'] = 'ToxTutor'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('ToxTutor', na=False), 'SemanticType'] = 'Product-NLM-LO-PSD'
+
+
+# --------------------------
+# Product-NLM (multi-group)
+# --------------------------
+
+# pubmed / pmc / medline / journals
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('pubmed', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('pub med', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('medline', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('journal abbreviation', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('PubMed/PMC/MEDLINE', na=False), 'SemanticType'] = 'Product-NLM'
+# umls
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('umls', na=False), 'PreferredTerm'] = 'UMLS'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('UMLS', na=False), 'SemanticType'] = 'Product-NLM'
+# rxnorm
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('rxnorm', na=False), 'PreferredTerm'] = 'RxNorm'
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('rx norm', na=False), 'PreferredTerm'] = 'RxNorm'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('RxNorm', na=False), 'SemanticType'] = 'Product-NLM'
+# snomed
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('snomed', na=False), 'PreferredTerm'] = 'SNOMED CT'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('SNOMED CT', na=False), 'SemanticType'] = 'Product-NLM'
+# index medicus
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('index medicus', na=False), 'PreferredTerm'] = 'Index Medicus'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('Index Medicus', na=False), 'SemanticType'] = 'Product-NLM'
+
+
+# --------------------------
+# Product-NIH (multi-group)
+# --------------------------
+
+# nih cde
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('nih cde', na=False), 'PreferredTerm'] = 'NIH Common Data Elements'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('NIH Common Data Elements', na=False), 'SemanticType'] = 'Product-NIH'
+
+
+# ----------------------
+# Product-NLM-Sunsetted
+# ----------------------
+
+# nihseniorhealth
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('nihseniorhealth', na=False), 'PreferredTerm'] = 'NIHSeniorHealth'
+LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('nih senior health', na=False), 'PreferredTerm'] = 'NIHSeniorHealth'
+LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('v', na=False), 'SemanticType'] = 'Product-NLM-Sunsetted'
+
+
 
 #%%
 # ======================================================================
-# 5. Exact-match to site-specific and vetted past matches
+# 6. Exact-match to site-specific and vetted past matches
 # ======================================================================
 '''
 Build a file of terms your site visitors are most commonly searching for,
@@ -448,7 +512,7 @@ SiteSpecificMatches.columns
 
 
 # Combine
-LogAfterSiteSpecific = pd.merge(LogAfterForeign, SiteSpecificMatches, how='left', on=['AdjustedQueryTerm'])
+LogAfterSiteSpecific = pd.merge(LogAfterOverride, SiteSpecificMatches, how='left', on=['AdjustedQueryTerm'])
 LogAfterSiteSpecific.columns
 '''
 'Query_x', 'AdjustedQueryTerm', 'TotalSearchFreq', 'PreferredTerm_x',
@@ -594,7 +658,7 @@ UnassignedAfterSS]]
 
 #%%
 # ==================================================================================
-# 6. Eyeball results; manually classify remaining "brands" into SiteSpecificMatches
+# 7. Eyeball results; manually classify remaining "brands" into SiteSpecificMatches
 # ==================================================================================
 '''
 Open spreadsheet of remaining unmatched; manually move ONLY your remaining high-frequency 
@@ -617,7 +681,7 @@ writer.save()
 
 #%%
 # ====================================================================
-# 7. Exact-match to UmlsMesh
+# 8. Exact-match to UmlsMesh
 # ====================================================================
 '''
 UmlsMesh is a custom-created file, with NLM's free MeSH vocabulary,
@@ -729,7 +793,7 @@ dupeCheck = pd.concat(g for _, g in LogAfterUmlsMesh.groupby("Query") if len(g) 
 
 #%%
 # ==========================================================
-# 8. Exact match to journal file (necessary for pilot site)
+# 9. Exact match to journal file (necessary for pilot site)
 # ==========================================================
 '''
 Necessary on the pilot site; other sites probably do not need. Okay for this 
@@ -824,9 +888,9 @@ product-terminology searches, but also making sure that high-frequency
 unmatched terms (top rows of UnmatchedAfterJournals) are classified -- 
 most of which are NOT visible through clustering; see below.
 
-
-
 '''
+
+
 
 query_df = UnmatchedAfterJournals
 
@@ -934,11 +998,9 @@ clusterResults.to_excel(writer,'clusterResults', index=False)
 writer.save()
 
 
-
-
 #%%
 # ==========================================================
-# 9. Manually add matches for UnmatchedAfterJournals
+# 10. Manually add matches for UnmatchedAfterJournals
 # ==========================================================
 '''
 The overall goal is to tag 80 percent of your queries; this procedure allows
@@ -972,9 +1034,6 @@ writer = pd.ExcelWriter(dataInterim + 'ManualMatch.xlsx')
 ManualMatch.to_excel(writer,'ManualMatch', index=False)
 # df2.to_excel(writer,'Sheet2')
 writer.save()
-
-
-
 
 
 #%%

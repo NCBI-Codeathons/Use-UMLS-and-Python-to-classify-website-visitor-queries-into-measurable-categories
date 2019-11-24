@@ -5,7 +5,7 @@ Created on Thu Oct 24 09:53:59 2019
 
 @authors: dan.wendling@nih.gov
 
-Last modified: 2019-11-18
+Last modified: 2019-11-24
 
 ------------------------------------------------------
  ** Semantic Search Analysis: Generate suggestions **
@@ -13,19 +13,18 @@ Last modified: 2019-11-18
 
 This script: For items that were not matched, derive "ListToCheck" - the highest 
 frequency unmatched terms, that you have time to work on, and then generate 
-options from MetaMap Lite, CSpell and FuzzyWuzzy. Now that the safe bets have 
-been tagged and removed from view, let's allow more liberal guessing and use 
+options from MetaMapLite, CSpell and FuzzyWuzzy. Now that the safe bets have 
+been tagged and removed from view, let's run more liberal guessing and use 
 human review to resolve SOME trickier tagging.
 
-RECOMMENDATION: Run the processes for MetaMap and CSpell, put the output files
-in place, then run this entire script at once.
+RECOMMENDATION: Run the processes for MetaMapLite and CSpell, put the output 
+files in place, then run this whole script at once.
 
 Consider how much work will benefit you. Solving 75-80% of your total search 
 volume, might be the limit to what you can accomplish in a reasonable amount 
 of time. Terms with multiple requests are more likely to be real things, such 
-as terms from web site pages. Items searched only once or twice may not have 
-enough information for classification. Real examples: "halloween genetics"; 
-"yoga nutrition". ??
+as your product or service terminology. Items searched only once or twice may 
+not be classify-able. Real examples: "halloween genetics"; "yoga nutrition". ??
 
 INPUTS:
     - data/interim/UnmatchedAfterMetathesaurus.xlsx (or current file of unmatched)
@@ -451,7 +450,8 @@ suggestions2.columns
 '''
 
 # Adjust
-suggestions2 = suggestions2[['TotalSearchFreq', 'AdjustedQueryTerm', 'SuggestedTerm', 'SemanticType', 'CUI', 'Source', 'Score']]
+suggestions2['UseYN'] = ''
+suggestions2 = suggestions2[['UseYN', 'TotalSearchFreq', 'AdjustedQueryTerm', 'SuggestedTerm', 'SemanticType', 'CUI', 'Source', 'Score']]
 suggestions2 = suggestions2.sort_values(by=['TotalSearchFreq', 'AdjustedQueryTerm', 'SemanticType'], ascending=[False,True,True])
 suggestions2 = suggestions2.reset_index(drop=True)
 
