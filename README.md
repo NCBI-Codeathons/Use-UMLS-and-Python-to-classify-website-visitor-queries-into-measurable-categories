@@ -2,11 +2,11 @@
 
 > **Chart and respond to trends in information seeking, by classifying your web visitor queries to a taxonomy and an ontology**
 
-Analytics data for *search* for large web sites is often too verbose and inharmonious to analyze. One "portal" site studied receives around 150,000 "clicks" per month from search-engine results screens, and around 100,000 queries per month from site search. Reporting for each has many variations on the same conceptual ideas, making the content difficult to analyze and summarize. For this reason, many web managers are not looking for meaning in the search terms people are using. 
+Analytics data for *search* for large web sites is often too verbose and inharmonious to analyze. One "portal" site studied receives around 150,000 "clicks" per month from search-engine results screens, and around 100,000 queries per month from internal site search. Examining visitor queries reveals many variations on the same conceptual ideas, making the content difficult to analyze and summarize. For this reason, many web managers are not looking for meaning in the search terms their site visitors are using. 
 
-**We should** put the more-frequent queries into "buckets" of broader topics, so subject matter experts have a way to focus on their own buckets and evaluate how well customers are finding what the customers are looking for. Health/medical analytics managers can use the Unified Medical Language System (UMLS) [Semantic Network](https://semanticnetwork.nlm.nih.gov/) and Semantic Groups, to do this. This work will help the SMEs envision new ways to serve those information needs better.
+**We should** put our search queries into "buckets" of broader topics, so subject matter experts (SMEs) have a way to understand how customers seek information. Having this, the SMEs can examine whether existing content should be modified to improve its findability, and whether new content should be added to fill gaps in customer needs. Health/medical analytics managers can use the Unified Medical Language System (UMLS) [Semantic Network](https://semanticnetwork.nlm.nih.gov/) and Semantic Groups, to do this to serve customer information needs better.
 
-Search represents the direct expression of our visitors’ intent. We should use this data to improve our staff’s awareness of what customers need from us. 
+Search represents the direct expression of our visitors’ intent. We should use this data to improve our staff’s awareness of what customers need from us.
 
 
 ## Use cases
