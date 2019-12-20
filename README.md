@@ -6,21 +6,21 @@ Analytics data for *search* for large web sites is often too verbose and inharmo
 
 **We should** put our search queries into "buckets" of broader topics, so subject matter experts (SMEs) have a way to understand how customers are currently seeking information within that SME's topic area. Having this, the SMEs can examine whether existing content should be modified to improve its findability, and whether new content should be added to fill gaps in customer needs. Health/medical analytics managers can use the Unified Medical Language System (UMLS) [Semantic Network](https://semanticnetwork.nlm.nih.gov/) and Semantic Groups, to do this to serve customer information needs better.
 
-Search represents the direct expression of our visitors’ intent. We should use this data to improve our staff’s awareness of what customers need from us.
+Search represents a direct expression of our customers’ intent. We should use this data to improve our staff’s awareness of what our customers need from us.
 
 
 ## Use cases
 
 1. A web analyst could say to a product owner, "Did you know that last month, 30 percent of your home page searches were in some way about drugs? Should we take action on this? How might we **improve task completion** and **reduce time on task,** for this type of information need?
-2. We should cluster and analyze **trends we know about.** For multi-faceted topics that directly relate to our mission, we should create customized analyses to collect the disparate keywords people might search for into a single bucket. How can we create a better match between user interest and our content? Where might we improve our site structure and navigation? 
+2. We should cluster and analyze **trends we know about.** For multi-faceted topics that directly relate to our mission, we should create customized analyses to collect the disparate keywords people might search for into a single bucket. How can we create a better match between user interest and the content we manage for this topic? Where might we improve our site structure and navigation? 
 3. We should focus staff work on **new trends, as the trends emerge.** When something new starts to happen that can be matched to our mission statement, we should deploy social media posts on the new topic immediately, and start new content projects to address the emerging information need.
 
 
 ## Pilot project results
 
-72% of search volume (for October 2019) is tagged within 3 minutes, after multiple iterations that updated the tagging files; 205,633 of 282,387 searches (72%) tagged and (because the logs are already aggregated) 30,604 of 89,476 rows (34%) tagged. What are untagged are terms searched less than a monthly average of once per day, that are multiple-concept searches.
+72% of search volume (for October 2019) is tagged with broader-topic names within 3 minutes, after multiple iterations that updated the tagging files. This was 205,633 of 282,387 searches (72%), and (because the logs are already aggregated) 30,604 of 89,476 rows (34%) were tagged. What are untagged are terms searched less than a monthly average of once per day, that are often multiple-concept searches of low frequency.
 
-During the pilot we did not add supplemental data for MetaMapLite or CSpell. This would improve results. 
+During the pilot we did not add supplemental data for the MetaMapLite or CSpell tools. This would improve results. 
 
 
 ## Screenshots
@@ -36,6 +36,7 @@ Only partially implemented during this Codeathon.
 
 <kbd><img src="https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/workflow.png" alt="Workflow" /></kbd>
 
+
 ## Dependencies
 
 ### Tools
@@ -44,11 +45,12 @@ Only partially implemented during this Codeathon.
 ** Pandas
 ** FuzzyWuzzy for fuzzy matching and clustering
 ** Matplotlib
-** Flask
-** Optional: Linux UI
-** Optional: Django if assistance in manual matching is needed.
 * [MetaMap JAVA API](https://metamap.nlm.nih.gov/JavaApi.shtml)
 * [CSpell - Spell checker for consumer language](https://lsg3.nlm.nih.gov/LexSysGroup/Projects/cSpell/current/web/index.html)
+* Optional
+** Linux UI
+** Flask
+** Django if assistance in manual matching is needed.
 
 Yet to be integrated; may be useful:
 
@@ -60,6 +62,7 @@ Yet to be integrated; may be useful:
 
 Search Strings input used for MetaMap and FuzzyWuzzy
 ![alt text](https://github.com/NCBI-Codeathons/Use-UMLS-and-Python-to-classify-website-visitor-queries-into-measurable-categories/blob/master/wordcloud_search_strings.JPG "Search terms")
+
 
 ## Future work
 
