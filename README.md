@@ -1,10 +1,10 @@
 # Classify website visitor queries into measurable categories
 
-> **Chart and respond to trends in information seeking, by classifying your web visitor queries to a taxonomy and an ontology**
+> **Chart and respond to trends in information seeking, by classifying your web visitor queries to a taxonomy and an ontology, using completely anonymized data**
 
-Analytics data for *search* for large web sites is often too verbose and inharmonious to analyze. One "portal" site studied receives around 150,000 "clicks" per month from search-engine results screens, and around 100,000 queries per month from internal site search. Examining visitor queries reveals many variations on the same conceptual ideas, making the content difficult to analyze and summarize. For this reason, many web managers are not looking for meaning in the search terms their site visitors are using. 
+Analytics data for *search* for large web sites is often too verbose and too inharmonious to analyze. One "portal" site studied receives around 150,000 "clicks" per month from search-engine results screens, and around 100,000 queries per month from internal site search. Examining the visitor queries reveals many variations on the same conceptual ideas, making the content difficult to analyze and summarize. For this reason, many web managers are not looking for meaning in the search terms their site visitors are using. 
 
-**We should** put our search queries into "buckets" of broader topics, so subject matter experts (SMEs) have a way to understand how customers are currently seeking information within that SME's topic area. Having this, the SMEs can examine whether existing content should be modified to improve its findability, and whether new content should be added to fill gaps in customer needs. Health/medical analytics managers can use the Unified Medical Language System (UMLS) [Semantic Network](https://semanticnetwork.nlm.nih.gov/) and Semantic Groups, to do this to serve customer information needs better.
+**We should** put our completely anonymized search queries into "buckets" of broader topics, so subject matter experts (SMEs) have a way to understand how customers are currently seeking information within that SME's topic area. Having this, the SMEs can examine whether existing content should be modified to improve its findability, and whether new content should be added to fill gaps in customer needs. Health/medical analytics managers can use the Unified Medical Language System (UMLS) [Semantic Network](https://semanticnetwork.nlm.nih.gov/) and Semantic Groups, to do this to serve customer information needs better.
 
 Search represents a direct expression of our customers’ intent. We should use this data to improve our staff’s awareness of what our customers need from us.
 
@@ -20,7 +20,7 @@ Search represents a direct expression of our customers’ intent. We should use 
 
 72% of search volume (for October 2019) is tagged with broader-topic names within 3 minutes, after multiple iterations that updated the tagging files. This was 205,633 of 282,387 searches (72%), and (because the logs are already aggregated) 30,604 of 89,476 rows (34%) were tagged. What are untagged are terms searched less than a monthly average of once per day, that are often multiple-concept searches of low frequency.
 
-During the pilot we did not add supplemental data for the MetaMapLite or CSpell tools. This would improve results. 
+During the pilot we did not create supplemental files for the MetaMapLite or CSpell tools. This would improve results. 
 
 
 ## Screenshots
