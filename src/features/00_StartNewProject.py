@@ -3,9 +3,9 @@
 """
 Created on Wed Jun 27 09:20:01 2018
 
-@authors: dan.wendling@nih.gov
+@authors: Dan Wendling
 
-Last modified: 2019-11-24
+Last modified: 2020-02-19
 
 ------------------------------------------
  ** Semantic Search Analysis: Start-up **
@@ -14,7 +14,7 @@ Last modified: 2019-11-24
 This script: A tool for collecting the type of "training data" that 
 machine learning requires to make this process more automated. This is the
 best way (so far) to classify the many ways your customers search for your 
-products and product-related terminology.
+products and product-related terminology, etc.
 
 The script puts your highest frequency terms into buckets/clusters, so
 you can use Excel to add 2 levels of aggregation, to match what the UMLS 
@@ -22,15 +22,16 @@ terminologies are assigning: Preferred Term (preferred version of the term) and
 Semantic Type (MID-LEVEL description).
 
 Build a list of terms SPECIFIC TO YOUR SITE, which would be handled poorly by 
-the processes in Phase 2:
+the processes in later scripts:
     
-    1. Your product and service names, in the forms that people search for them
-    2. Person names, whether staff, authors, etc.
-    3. Organizational names specific to pieces of your organization
-    4. Anything you don't want the Phase 2 tools to tag. For example, if
-       your organization is using a generic word as an acronym, you probably 
-       want these occurrences tagged as your product, rather than the generic 
-       term.
+1. Your "brands" - Programs, product and service names, in the forms that 
+    people search for them
+2. Person names, whether staff, authors, historical figures, fictional 
+    characters, etc.
+3. Anything else you don't want the later scripts to tag. For example, if 
+    your organization is using a generic word as an acronym, you probably 
+    want these occurrences tagged as your product, rather than the generic 
+    term.
 
 You can re-run the fuzzy-match process until you believe you have categorized 
 what you need. Over time this will lighten the manual work in later steps with 
@@ -91,8 +92,11 @@ from fuzzywuzzy import process
 import collections
 import copy
 
-# Set home, input, and output directories; files
-home_folder = os.path.expanduser('~')
+from pathlib import *
+# To be used with str(Path.home())
+
+# Set working directory and directories for read/write
+home_folder = str(Path.home()) # os.path.expanduser('~')
 os.chdir(home_folder + '/Projects/classifysearches')
 
 SearchConsoleRaw = 'data/raw/SearchConsole.csv' # Put log here before running script
@@ -232,6 +236,9 @@ query_df = query_df.loc[(query_df['TotalSearchFreq'] > 5)]
 
 Score of ~70, for pilot site, allows ~1 word to be the same in ~3-word phrases;
 this is good for "grants" but bad regarding "medicine."
+
+SMALL BUCKETS = PRECISION IS GOOD BUT REQUIRES ITERATION.
+LARGE BUCKETS = PRECISION IS NOT VERY GOOD.
 '''
 
 # Iterations after initial build: query_df = UnmatchedAfterJournals # UnmatchedAfterUmlsMesh UnassignedAfterSS
@@ -352,22 +359,10 @@ append the result to SiteSpecificTerms.xlsx.
 |  yellow wallpaper	               |  The Literature of Prescription | Product-LO-Exhibit |
 |  the yellow paper	               |  The Literature of Prescription | Product-LO-Exhibit |
 |  the yellow wallpaper online pdf |  The Literature of Prescription | Product-LO-Exhibit |
-|  the yellow wallpaper read       |  The Literature of Prescription | Product-LO-Exhibit |
-|  yellow wallpaper gilman pdf	   |  The Literature of Prescription | Product-LO-Exhibit |
-|  the yellow wallpaper text	       |  The Literature of Prescription | Product-LO-Exhibit |
-|  the yellow wallpaper short story|  The Literature of Prescription | Product-LO-Exhibit |
-|  the yellow wallpaper book	       |  The Literature of Prescription | Product-LO-Exhibit |
-|  the yellow wallpaer	           |  The Literature of Prescription | Product-LO-Exhibit |
 |  medical subject headings (mesh) |  MeSH                           | Product-MeSH       |
 |  medline                         |  PubMed/MEDLINE                 | Product-NCBI       |
-|  medilne                         |  PubMed/MEDLINE                 | Product-NCBI       |
-|  medlibe                         |  PubMed/MEDLINE                 | Product-NCBI       |
-|  medlie                          |  PubMed/MEDLINE                 | Product-NCBI       |
-|  medlime                         |  PubMed/MEDLINE                 | Product-NCBI       |
-|  medlin                          |  PubMed/MEDLINE                 | Product-NCBI       |
-|  medlina                         |  PubMed/MEDLINE                 | Product-NCBI       |
-'''
 
+'''
 
 #%%
 # ========================================================
@@ -380,35 +375,12 @@ You can judge then how many cycles would be appropriate for you to build your
 SiteSpecificTerms.xlsx file.
 '''
 
-
-
 #%%
 # ========================================================
 # To update SiteSpecificMatches.xlsx, such as punctuation
 # ========================================================
 
 """
-SiteSpecificMatches = pd.read_excel('data/matchFiles/SiteSpecificMatches.xlsx')
-
-# Replace hyphen with space because the below would replace with nothing
-SiteSpecificMatches['AdjustedQueryTerm'] = SiteSpecificMatches['AdjustedQueryTerm'].str.replace('-', ' ')
-# Remove https:// if used
-SiteSpecificMatches['AdjustedQueryTerm'] = SiteSpecificMatches['AdjustedQueryTerm'].str.replace('http://', '')
-SiteSpecificMatches['AdjustedQueryTerm'] = SiteSpecificMatches['AdjustedQueryTerm'].str.replace('https://', '')
-
-# Remove all chars except a-zA-Z0-9 and leave foreign chars alone
-SiteSpecificMatches['AdjustedQueryTerm'] = SiteSpecificMatches['AdjustedQueryTerm'].str.replace(r'[^\w\s]+', '')
-
-# Removing punct may mean that some entries will be duplicates
-SiteSpecificMatches = SiteSpecificMatches.drop_duplicates(subset=['AdjustedQueryTerm'])
-
-# Sort for easier editing
-SiteSpecificMatches = SiteSpecificMatches.sort_values(by=['PreferredTerm', 'AdjustedQueryTerm'], ascending=[True, True])
-
-# Write out
-writer = pd.ExcelWriter('data/matchFiles/SiteSpecificMatches.xlsx')
-SiteSpecificMatches.to_excel(writer,'SiteSpecificMatches', index=False)
-# df2.to_excel(writer,'Sheet2')
-writer.save()
+Run src/data/update_matchFiles.py, section for SiteSpecificMatches.
 """
 
