@@ -3,9 +3,9 @@
 """
 Created on Wed Jun 27 09:20:01 2018
 
-@authors: dan.wendling@nih.gov
+@authors: Dan Wendling
 
-Last modified: 2019-11-24
+Last modified: 2020-02-19
 
 ------------------------------------------
  ** Semantic Search Analysis: Start-up **
@@ -14,18 +14,23 @@ Last modified: 2019-11-24
 This script: Import search queries from Google Analytics, clean up, 
 match query entries against historical files.
 
+Okay to run all at once, but see the script for instructions for manual operations.
+
 INPUTS:
-- data/raw/SearchConsoleNew.csv - log of google.com search results where person landed on your site
-- data/raw/SiteSearchNew.csv - log from your site search
-- data/matchFiles/SiteSpecificMatches.xslx - From custom clustering of terms that won't be in UMLS
-- data/matchFiles/PastMatches.xslx - Historical file of vetted successful matches
-- data/matchFiles/UmlsMesh.xslx - Free-to-use controlled vocabulary - MeSH - with UMLS Semantic Types
+    - data/raw/SearchConsoleNew.csv - log of google.com search results (GA calls "Queries") where person landed on your site
+    - data/raw/SiteSearchNew.csv - log from your site search (GA calls "Search Terms")
+    - data/matchFiles/SiteSpecificMatches.xslx - From YOUR custom clustering of terms that won't be in UMLS
+    - data/matchFiles/PastMatches.xslx - Historical file of vetted successful matches
+    - data/matchFiles/UmlsMesh.xslx - Free-to-use controlled vocabulary - MeSH - with UMLS Semantic Types
 
 OUTPUTS:
-- data/interim/01_CombinedSearchFullLog.xlsx - Lightly modified full log before changes
-- data/interim/ForeignUnresolved.xslx - Currently, queries with non-English characters are removed
-- data/interim/LogAfterPhase1.xslx - Full log after local processing
-- data/interim/UnmatchedAfterPhase1.xslx - Queries that have not been matched, used in Phase 2
+    - data/interim/01_CombinedSearchFullLog.xlsx - Lightly modified full log before changes
+    - data/interim/ForeignUnresolved.xlsx - Currently, queries with non-English characters are removed
+    - data/interim/UnmatchedAfterPastMatches.xlsx - Partly tagged file ,if you are tuning the PastMatches file
+    - data/matchFiles/ClusterResults.xlsx - Unmatched terms, top CLUSTERS - update matchFiles in batches
+    - data/interim/ManualMatch.xlsx - Unmatched terms, top FREQUENCY COUNTS - update matchFiles one at a time
+    - data/interim/LogAfterJournals.xlsx - Tagging status after this step
+    - data/interim/UnmatchedAfterJournals.xlsx - What still needs to be tagged after this step.
 
 
 -------------------------------
@@ -58,13 +63,17 @@ SCRIPT CONTENTS
 5. Ignore everything except one program/product/service term
 6. Exact-match to site-specific and vetted past matches
 7. Eyeball results; manually classify remaining "brands" into SiteSpecificMatches
+    * PROJECT STARTUP - OPTIONAL: UPDATE SITE-SEPCIFIC MATCHES AND RE-RUN TO THIS POINT *
 8. Exact-match to UmlsMesh
-9. Exact match to journal file (necessary for pilot site)
-10. Spell check with CSpell
+9. Exact match to journal file (necessary for pilot site, replace with your site-specific need)
+10. MANUAL PROCESS: Re-cluster, update SiteSpecificMatches.xlsx, re-run
+11. MANUALLY add matches from ManualMatch.xlsx for high-frequency unclassified
+12. Write out LogAfterJournals and UnmatchedAfterJournals
+13. Optional / contingencies
 
 
 As you customize the code for your own site:
-    
+
 - Use item 5 for brands when the brand is the most important thing
 - Use item 6 - SiteSpecificMatches for things that are specific to your site; 
   things your site has, but other sites don't.
@@ -94,9 +103,11 @@ from fuzzywuzzy import process
 import collections
 import copy
 
+from pathlib import *
+# To be used with str(Path.home())
 
 # Set working directory and directories for read/write
-home_folder = os.path.expanduser('~')
+home_folder = str(Path.home()) # os.path.expanduser('~')
 os.chdir(home_folder + '/Projects/classifysearches')
 
 dataRaw = 'data/raw/' # Put log here before running script
@@ -132,7 +143,7 @@ Script expects:
 
 # Rename cols
 SearchConsole.rename(columns={'Search Query': 'Query', 
-                          'Average Position': 'AveragePosition'}, inplace=True)
+                              'Average Position': 'AveragePosition'}, inplace=True)
 
 SearchConsole.columns
 '''
@@ -140,13 +151,15 @@ SearchConsole.columns
 '''
 
 '''
-Remove zer-click searches; these are (apparently) searches at Google where the 
-search result page answers the questio (but the term has a landing page on our 
+Remove zero-click searches; these are (apparently) searches at Google where the 
+search result page answers the question (but the term has a landing page on our 
 site? Unclear what's going on.
 For example, https://www.similarweb.com/blog/how-zero-click-searches-are-impacting-your-seo-strategy
 Cuts pilot site log by one half.
 '''
 SearchConsole = SearchConsole.loc[(SearchConsole['Clicks'] > 0)]
+
+# SearchConsole.shape
 
 
 # -----------
@@ -163,13 +176,13 @@ Script expects:
 '''
 
 # Rename cols
-SiteSearch.rename(columns={'Search Term': 'Query', 
-                              'Total Unique Searches': 'TotalUniqueSearches',
-                              'Results Pageviews / Search': 'ResultsPVSearch',
-                              '% Search Exits': 'PercentSearchExits', 
-                              '% Search Refinements': 'PercentSearchRefinements', 
-                              'Time after Search': 'TimeAfterSearch',
-                              'Avg. Search Depth': 'AvgSearchDepth'}, inplace=True)
+SiteSearch.rename(columns={'Search Term': 'Query',
+                           'Total Unique Searches': 'TotalUniqueSearches',
+                           'Results Pageviews / Search': 'ResultsPVSearch',
+                           '% Search Exits': 'PercentSearchExits', 
+                           '% Search Refinements': 'PercentSearchRefinements', 
+                           'Time after Search': 'TimeAfterSearch',
+                           'Avg. Search Depth': 'AvgSearchDepth'}, inplace=True)
 
 SiteSearch.columns
 '''
@@ -178,24 +191,71 @@ SiteSearch.columns
 '''
 
 # Join the two df's, keeping all rows and putting terms in common into one row
-CombinedSearch = pd.merge(SearchConsole, SiteSearch, on = ['Query'], how = 'outer')
+CombinedLog = pd.merge(SearchConsole, SiteSearch, on = 'Query', how = 'outer')
 
 
 # New col for total times people searched for term, regardless of location searched from
-CombinedSearch['TotalSearchFreq'] = CombinedSearch.fillna(0)['Clicks'] + CombinedSearch.fillna(0)['TotalUniqueSearches']
-CombinedSearch = CombinedSearch.sort_values(by='TotalSearchFreq', ascending=False).reset_index(drop=True)
+CombinedLog['TotalSearchFreq'] = CombinedLog.fillna(0)['Clicks'] + CombinedLog.fillna(0)['TotalUniqueSearches']
+CombinedLog = CombinedLog.sort_values(by='TotalSearchFreq', ascending=False).reset_index(drop=True)
+
+# Queries longer than 255 char generate an error in Excel. Shouldn't be that 
+# long anyway; let's cut off at 100 char (still too long but stops the error)
+# ?? df.apply(lambda x: x.str.slice(0, 20))
+CombinedLog['Query'] = CombinedLog['Query'].str[:100]
 
 # Dupe off Query column so we can tinker with the dupe
-CombinedSearch['AdjustedQueryTerm'] = CombinedSearch['Query'].str.lower()
+CombinedLog['AdjustedQueryTerm'] = CombinedLog['Query'].str.lower()
+
+
+# -------------------------
+# Remove punctuation, etc.
+# -------------------------
+
+# Replace hyphen with space because the below would replace with nothing
+CombinedLog['AdjustedQueryTerm'] = CombinedLog['AdjustedQueryTerm'].str.replace('-', ' ')
+# Remove https:// if used
+CombinedLog['AdjustedQueryTerm'] = CombinedLog['AdjustedQueryTerm'].str.replace('http://', '')
+CombinedLog['AdjustedQueryTerm'] = CombinedLog['AdjustedQueryTerm'].str.replace('https://', '')
+
+'''
+Regular expressions info from https://docs.python.org/3/library/re.html
+
+^   (Caret.) Matches the start of the string, and in MULTILINE mode also 
+    matches immediately after each newline.
+w  For Unicode (str) patterns: Matches Unicode word characters; this 
+    includes most characters that can be part of a word in any language, 
+    as well as numbers and the underscore. If the ASCII flag is used, only 
+    [a-zA-Z0-9_] is matched.
+s  For Unicode (str) patterns: Matches Unicode whitespace characters 
+    (which includes [ \t\n\r\fv], and also many other characters, for 
+    example the non-breaking spaces mandated by typography rules in many 
+    languages). If the ASCII flag is used, only [ \t\n\r\fv] is matched.
++   Causes the resulting RE to match 1 or more repetitions of the preceding 
+    RE. ab+ will match ‘a’ followed by any non-zero number of ‘b’s; it will 
+    not match just ‘a’.
+Spyder editor can somehow lose the regex, such as when it is copied and pasted
+inside the editor; an attempt to preserve inside this comment: (r'[^\w\s]+','')
+'''
+
+# Remove all chars except a-zA-Z0-9 and leave foreign chars alone
+CombinedLog['AdjustedQueryTerm'] = CombinedLog['AdjustedQueryTerm'].str.replace(r'[^\w\s]+', '')
+
+# Remove modified entries that are now dupes or blank entries
+CombinedLog['AdjustedQueryTerm'] = CombinedLog['AdjustedQueryTerm'].str.replace('  ', ' ') # two spaces to one
+CombinedLog['AdjustedQueryTerm'] = CombinedLog['AdjustedQueryTerm'].str.strip() # remove leading and trailing spaces
+CombinedLog = CombinedLog.loc[(CombinedLog['AdjustedQueryTerm'] != "")]
+
 
 # Write out this version; won't need most columns until later
 writer = pd.ExcelWriter(dataInterim + '01_CombinedSearchFullLog.xlsx')
-CombinedSearch.to_excel(writer,'CombinedSearchFull', index=False)
+CombinedLog.to_excel(writer,'CombinedLogFull', index=False)
 # df2.to_excel(writer,'Sheet2')
 writer.save()
 
+
+
 # Cut down
-CombinedSearchClean = CombinedSearch[['Query', 'AdjustedQueryTerm', 'TotalSearchFreq']]
+CombinedSearchClean = CombinedLog[['Query', 'AdjustedQueryTerm', 'TotalSearchFreq']]
 
 # Remove rows containing nulls, mistakes
 CombinedSearchClean = CombinedSearchClean.dropna()
@@ -206,44 +266,8 @@ CombinedSearchClean['SemanticType'] = ''
 
 
 # Free up memory
-del [[SearchConsole, SiteSearch, CombinedSearch]]
+del [[SearchConsole, SiteSearch, CombinedLog]]
 
-
-# -------------------------
-# Remove punctuation, etc.
-# -------------------------
-
-# Replace hyphen with space because the below would replace with nothing
-CombinedSearchClean['AdjustedQueryTerm'] = CombinedSearchClean['AdjustedQueryTerm'].str.replace('-', ' ')
-# Remove https:// if used
-CombinedSearchClean['AdjustedQueryTerm'] = CombinedSearchClean['AdjustedQueryTerm'].str.replace('http://', '')
-CombinedSearchClean['AdjustedQueryTerm'] = CombinedSearchClean['AdjustedQueryTerm'].str.replace('https://', '')
-
-'''
-Regular expressions info from https://docs.python.org/3/library/re.html
-
-^   (Caret.) Matches the start of the string, and in MULTILINE mode also 
-    matches immediately after each newline.
-\w  For Unicode (str) patterns: Matches Unicode word characters; this 
-    includes most characters that can be part of a word in any language, 
-    as well as numbers and the underscore. If the ASCII flag is used, only 
-    [a-zA-Z0-9_] is matched.
-\s  For Unicode (str) patterns: Matches Unicode whitespace characters 
-    (which includes [ \t\n\r\f\v], and also many other characters, for 
-    example the non-breaking spaces mandated by typography rules in many 
-    languages). If the ASCII flag is used, only [ \t\n\r\f\v] is matched.
-+   Causes the resulting RE to match 1 or more repetitions of the preceding 
-    RE. ab+ will match ‘a’ followed by any non-zero number of ‘b’s; it will 
-    not match just ‘a’.
-
-'''
-# Remove all chars except a-zA-Z0-9 and leave foreign chars alone
-CombinedSearchClean['AdjustedQueryTerm'] = CombinedSearchClean['AdjustedQueryTerm'].str.replace(r'[^\w\s]+', '')
-
-# Remove modified entries that are now dupes or blank entries
-CombinedSearchClean['AdjustedQueryTerm'] = CombinedSearchClean['AdjustedQueryTerm'].str.replace('  ', ' ') # two spaces to one
-CombinedSearchClean['AdjustedQueryTerm'] = CombinedSearchClean['AdjustedQueryTerm'].str.strip() # remove leading and trailing spaces
-CombinedSearchClean = CombinedSearchClean.loc[(CombinedSearchClean['AdjustedQueryTerm'] != "")]
 
 # CombinedSearchClean.head()
 CombinedSearchClean.columns
@@ -251,7 +275,6 @@ CombinedSearchClean.columns
 'Referrer', 'Query', 'Date', 'SessionID', 'CountForPgDate',
        'AdjustedQueryTerm', 'SemanticType', 'PreferredTerm'
 '''
-
 
 
 #%%
@@ -310,6 +333,7 @@ writer.save()
 # Remove from consideration
 LogAfterForeign = CombinedSearchClean[CombinedSearchClean.SemanticType.str.contains("Foreign unresolved") == False]
 
+
 # Free memory
 del [[ForeignUnresolved, CombinedSearchClean]]
 
@@ -321,8 +345,9 @@ del [[ForeignUnresolved, CombinedSearchClean]]
 '''
 Later procedures won't be able to match the below very well, so match them here.
 
-NOTE: Doing this will ignore concepts when the search query was a complex one.
-We get great coverage but in some cases this might sacrifice completeness.
+NOTE: Doing this will ignore additional concepts when the search query was a 
+complex one. Coverage of hard-to-match queries, at the expense of accuracy/completeness,
+which may require a good deal of manual work.
 '''
 
 # --- Bibliographic Entity: Usually people searching for a document title ---
@@ -338,15 +363,30 @@ LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('Bibliographic
 # FIXME - Clarify and grab the below, PMID, ISSN, ISBN 0-8016-5253-7), etc.
 # LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('^[0-9]{3,}', na=False), 'PreferredTerm'] = 'Numeric ID'
 LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('[0-9]{5,}', na=False), 'PreferredTerm'] = 'Numeric ID'
-LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('[0-9]{4,}-[0-9]{4,}', na=False), 'PreferredTerm'] = 'Numeric ID'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('[0-9]{4,} [0-9]{4,}', na=False), 'PreferredTerm'] = 'Numeric ID'
 LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('Numeric ID', na=False), 'SemanticType'] = 'Numeric ID'
+
+
+# Unresolved - Mysterious / mistakes / unknown
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('^xxxx$', na=False), 'PreferredTerm'] = 'Unresolved'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('^xxxxx$', na=False), 'PreferredTerm'] = 'Unresolved'
+LogAfterForeign.loc[LogAfterForeign['AdjustedQueryTerm'].str.contains('^xxxxxx$', na=False), 'PreferredTerm'] = 'Unresolved'
+
+LogAfterForeign.loc[LogAfterForeign['PreferredTerm'].str.contains('Unresolved', na=False), 'SemanticType'] = 'Unresolved'
+
 
 # -------------
 # How we doin?
 # -------------
+'''
+Multiple sections have these "How we doin?" counts, BUT they are not the 
+same. Sometimes SemanticType nulls are counted, and sometimes SemanticType
+empty strings are counted.
+'''
 
 # Total queries in log
 SearchesRepresentedTot = LogAfterForeign['TotalSearchFreq'].sum().astype(int)
+
 SearchesAssignedTot = LogAfterForeign.loc[LogAfterForeign['SemanticType'] != '']
 SearchesAssignedTot = SearchesAssignedTot['TotalSearchFreq'].sum().astype(int)
 SearchesAssignedPercent = (SearchesAssignedTot / SearchesRepresentedTot * 100).astype(int)
@@ -366,7 +406,7 @@ print("\n==========================================================\n ** LogAfte
 # =============================================================
 '''
 USE CAREFULLY, when part of a search term is IMPORTANT ENOUGH TO OVERRIDE 
-EVERYTHING ELSE in the term. Often this is a "brand," but it can also be 
+EVERYTHING ELSE in the query. Often this is a "brand," but it can also be 
 terminology that is only associated with a specific program/product/service. 
 Example uses: 
     - You want to view all the ways customers are trying to get to the home 
@@ -381,52 +421,6 @@ TODO - Update this to a function that is fed by a file.
 LogAfterOverride = LogAfterForeign
 
 
-# ----------------------
-# Product-NLM-NCBI
-# ----------------------
-
-# blast
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('blast', na=False), 'PreferredTerm'] = 'BLAST'
-LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('BLAST', na=False), 'SemanticType'] = 'Product-NLM-NCBI'
-
-
-# ----------------------
-# Product-NLM-LO-HMD
-# ----------------------
-
-# index cat
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('index cat', na=False), 'PreferredTerm'] = 'IndexCat'
-LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('IndexCat', na=False), 'SemanticType'] = 'Product-NLM-LO-HMD'
-
-# native voices
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('native voices', na=False), 'PreferredTerm'] = 'Native Voices'
-LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('Native Voices', na=False), 'SemanticType'] = 'Product-NLM-LO-HMD-Exhibition'
-
-# yellow wallpaper
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('yellow wallpaper', na=False), 'PreferredTerm'] = 'The Literature of Prescription'
-LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('The Literature of Prescription', na=False), 'SemanticType'] = 'Product-NLM-LO-HMD-Exhibition'
-
-
-# ----------------------
-# Product-NLM-LO-MMS
-# ----------------------
-
-# mesh
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('mesh', na=False), 'PreferredTerm'] = 'MeSH'
-LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('MeSH', na=False), 'SemanticType'] = 'Product-NLM'
-
-
-# ----------------------
-# Product-NLM-LO-PSD
-# ----------------------
-# docline
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('docline', na=False), 'PreferredTerm'] = 'DOCLINE'
-LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('DOCLINE', na=False), 'SemanticType'] = 'Product-NLM-LO-PSD'
-# toxtutor
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('toxtutor', na=False), 'PreferredTerm'] = 'ToxTutor'
-LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('ToxTutor', na=False), 'SemanticType'] = 'Product-NLM-LO-PSD'
-
-
 # --------------------------
 # Product-NLM (multi-group)
 # --------------------------
@@ -437,39 +431,6 @@ LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('pub med
 LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('medline', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
 LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('journal abbreviation', na=False), 'PreferredTerm'] = 'PubMed/PMC/MEDLINE'
 LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('PubMed/PMC/MEDLINE', na=False), 'SemanticType'] = 'Product-NLM'
-# umls
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('umls', na=False), 'PreferredTerm'] = 'UMLS'
-LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('UMLS', na=False), 'SemanticType'] = 'Product-NLM'
-# rxnorm
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('rxnorm', na=False), 'PreferredTerm'] = 'RxNorm'
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('rx norm', na=False), 'PreferredTerm'] = 'RxNorm'
-LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('RxNorm', na=False), 'SemanticType'] = 'Product-NLM'
-# snomed
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('snomed', na=False), 'PreferredTerm'] = 'SNOMED CT'
-LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('SNOMED CT', na=False), 'SemanticType'] = 'Product-NLM'
-# index medicus
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('index medicus', na=False), 'PreferredTerm'] = 'Index Medicus'
-LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('Index Medicus', na=False), 'SemanticType'] = 'Product-NLM'
-
-
-# --------------------------
-# Product-NIH (multi-group)
-# --------------------------
-
-# nih cde
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('nih cde', na=False), 'PreferredTerm'] = 'NIH Common Data Elements'
-LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('NIH Common Data Elements', na=False), 'SemanticType'] = 'Product-NIH'
-
-
-# ----------------------
-# Product-NLM-Sunsetted
-# ----------------------
-
-# nihseniorhealth
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('nihseniorhealth', na=False), 'PreferredTerm'] = 'NIHSeniorHealth'
-LogAfterOverride.loc[LogAfterOverride['AdjustedQueryTerm'].str.contains('nih senior health', na=False), 'PreferredTerm'] = 'NIHSeniorHealth'
-LogAfterOverride.loc[LogAfterOverride['PreferredTerm'].str.contains('v', na=False), 'SemanticType'] = 'Product-NLM-Sunsetted'
-
 
 
 #%%
@@ -492,7 +453,7 @@ work in later steps.
 DO use correct spellings, because later we fuzzy match off of the terms here. 
 Okay to add previously matched foreign terms here.
 
-** TO BUILD A NEW FILE **
+** TO BUILD A NEW FILE - RECOMMENDATION **
 Export the top 1,000 queries from the past 12 months and 
 cluster them using the code at x. Then process similar BRANDED PRODUCTS, etc.
 (ONLY the categories above!) in a spreadsheet, building the additional column 
@@ -519,7 +480,12 @@ LogAfterSiteSpecific.columns
        'SemanticType_x', 'PreferredTerm_y', 'SemanticType_y', 'Query_y'
 '''
 
-# Future: Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE. Temporary fix:
+
+# TODO - Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE.
+# This code stops the merge from wiping out some data. Temporary fix:
+# For the next operation, set _x cols to nan instead of empty string ''
+LogAfterSiteSpecific['PreferredTerm_x'] = LogAfterSiteSpecific['PreferredTerm_x'].replace(r'^\s*$', np.nan, regex=True)
+LogAfterSiteSpecific['SemanticType_x'] = LogAfterSiteSpecific['SemanticType_x'].replace(r'^\s*$', np.nan, regex=True)
 # LogAfterSiteSpecific['Query2'] = LogAfterSiteSpecific['Query_x'].where(LogAfterSiteSpecific['Query_x'].notnull(), LogAfterSiteSpecific['Query_y'])
 # LogAfterSiteSpecific['Query2'] = LogAfterSiteSpecific['Query_y'].where(LogAfterSiteSpecific['Query_y'].notnull(), LogAfterSiteSpecific['Query_x'])
 LogAfterSiteSpecific['PreferredTerm2'] = LogAfterSiteSpecific['PreferredTerm_x'].where(LogAfterSiteSpecific['PreferredTerm_x'].notnull(), LogAfterSiteSpecific['PreferredTerm_y'])
@@ -540,7 +506,10 @@ times at this point.
 
 '''
 
-UnassignedAfterSS = LogAfterSiteSpecific.loc[LogAfterSiteSpecific['SemanticType'] == '']
+# SemanticType empties alternate between null and empty string
+UnassignedAfterSS = LogAfterSiteSpecific[LogAfterSiteSpecific['SemanticType'].isnull()]
+# UnassignedAfterSS = LogAfterSiteSpecific.loc[LogAfterSiteSpecific['SemanticType'] == '']
+
 # Set a limit, say, frequency of 10 or more
 UnassignedAfterSS = UnassignedAfterSS.loc[(UnassignedAfterSS['TotalSearchFreq'] >= 5)]
 # We updated AdjustedQueryTerm so put that in the place of Query
@@ -554,12 +523,14 @@ UnassignedAfterSS.rename(columns={'AdjustedQueryTerm': 'Query'}, inplace=True)
 
 # Total queries in log
 SearchesRepresentedTot = LogAfterSiteSpecific['TotalSearchFreq'].sum().astype(int)
-SearchesAssignedTot = LogAfterSiteSpecific.loc[LogAfterSiteSpecific['SemanticType'] != '']
+SearchesAssignedTot = LogAfterSiteSpecific[LogAfterSiteSpecific['SemanticType'].notnull()]
+# SearchesAssignedTot = LogAfterSiteSpecific.loc[LogAfterSiteSpecific['SemanticType'] != '']
 SearchesAssignedTot = SearchesAssignedTot['TotalSearchFreq'].sum().astype(int)
 SearchesAssignedPercent = (SearchesAssignedTot / SearchesRepresentedTot * 100).astype(int)
 # PercentOfSearchesUnAssigned = 100 - PercentOfSearchesAssigned
 RowsTot = len(LogAfterSiteSpecific)
-RowsAssignedCnt = (LogAfterSiteSpecific['SemanticType'].values != '').sum() # .isnull().sum()
+RowsAssignedCnt = (LogAfterSiteSpecific['SemanticType'].notnull().sum())
+# RowsAssignedCnt = (LogAfterSiteSpecific['SemanticType'].values != '').sum() # .isnull().sum()
 # RowsUnassignedCnt = TotRows - RowsAssigned
 RowsAssignedPercent = (RowsAssignedCnt / RowsTot * 100).astype(int)
 
@@ -589,8 +560,9 @@ LogAfterPastMatches.columns
        'SemanticType_x', 'PreferredTerm_y', 'SemanticType_y', 'ui'
 '''
 
-# Future: Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE. 
-# Temporary fix: Move _y into _x if _x is empty; or here: where _x has content, use _x, otherwise use _y
+# TODO - Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE.
+# This code stops the merge from wiping out some data. Temporary fix:
+# Move _y into _x if _x is empty; or here: where _x has content, use _x, otherwise use _y
 LogAfterPastMatches['PreferredTerm2'] = LogAfterPastMatches['PreferredTerm_x'].where(LogAfterPastMatches['PreferredTerm_x'].notnull(), LogAfterPastMatches['PreferredTerm_y'])
 LogAfterPastMatches['PreferredTerm2'] = LogAfterPastMatches['PreferredTerm_y'].where(LogAfterPastMatches['PreferredTerm_y'].notnull(), LogAfterPastMatches['PreferredTerm_x'])
 LogAfterPastMatches['SemanticType2'] = LogAfterPastMatches['SemanticType_x'].where(LogAfterPastMatches['SemanticType_x'].notnull(), LogAfterPastMatches['SemanticType_y'])
@@ -631,12 +603,14 @@ JournalMatches.columns
 
 # Total queries in log
 SearchesRepresentedTot = LogAfterPastMatches['TotalSearchFreq'].sum().astype(int)
-SearchesAssignedTot = LogAfterPastMatches.loc[LogAfterPastMatches['SemanticType'] != '']
+SearchesAssignedTot = LogAfterPastMatches[LogAfterPastMatches['SemanticType'].notnull()]
+# SearchesAssignedTot = LogAfterPastMatches.loc[LogAfterPastMatches['SemanticType'] != '']
 SearchesAssignedTot = SearchesAssignedTot['TotalSearchFreq'].sum().astype(int)
 SearchesAssignedPercent = (SearchesAssignedTot / SearchesRepresentedTot * 100).astype(int)
 # PercentOfSearchesUnAssigned = 100 - PercentOfSearchesAssigned
 RowsTot = len(LogAfterPastMatches)
-RowsAssignedCnt = (LogAfterPastMatches['SemanticType'].values != '').sum() # .isnull().sum()
+RowsAssignedCnt = (LogAfterPastMatches['SemanticType'].notnull().sum())
+# RowsAssignedCnt = (LogAfterPastMatches['SemanticType'].values != '').sum() # .isnull().sum()
 # RowsUnassignedCnt = TotRows - RowsAssigned
 RowsAssignedPercent = (RowsAssignedCnt / RowsTot * 100).astype(int)
 
@@ -645,7 +619,8 @@ print("\n==============================================================\n ** Log
 
 
 # Separate next operations so previous matches won't be overwritten
-UnmatchedAfterPastMatches = LogAfterPastMatches.loc[LogAfterPastMatches['SemanticType'] == '']
+# UnmatchedAfterPastMatches = LogAfterPastMatches.loc[LogAfterPastMatches['SemanticType'] == '']
+UnmatchedAfterPastMatches = LogAfterPastMatches[LogAfterPastMatches['SemanticType'].isnull()]
 UnmatchedAfterPastMatches = UnmatchedAfterPastMatches[['AdjustedQueryTerm', 'TotalSearchFreq']].reset_index(drop=True)
 UnmatchedAfterPastMatches.rename(columns={'AdjustedQueryTerm': 'Search Query'}, inplace=True)
 
@@ -655,19 +630,32 @@ del [[LogAfterForeign, LogAfterSiteSpecific, SiteSpecificMatches,
 UnassignedAfterSS]]
 
 
-
 #%%
-# ==================================================================================
-# 7. Eyeball results; manually classify remaining "brands" into SiteSpecificMatches
-# ==================================================================================
+# =========================================================================================
+# 7. Eyeball results; manually classify remaining "brands," etc., into SiteSpecificMatches
+# =========================================================================================
 '''
-Open spreadsheet of remaining unmatched; manually move ONLY your remaining high-frequency 
-brands into SiteSpecificMatches. You can also re-run clustering. We
-developed a Django-NoSQL interface, which could be used for long-term projects;
+RUNNING THIS SCRIPT FOR THE FIRST TIME OR FIRST FEW TIMES?
+
+The MeSH procedure (follows this one) can generate incorrect matches for your site-specific
+terms. For example, BLAST is a "branded" genetics resource, that MeSH will 
+classify as an explosion. This is the time to make sure it's classified as a brand.
+
+Create this spreadsheet of remaining unmatched; open it and manually move ONLY 
+site-specific terms, into SiteSpecificMatches, and re-run this script. 
+
+Later in this script you will have the chance to run fuzzy-match clustering 
+multiple times until you have captured what you want / what you have time for.
+But if you have program, product, or service names THAT ARE GENERIC TERMS, you
+should classify them before running MeSH matching.
+
+We developed a Django-NoSQL interface that could be used for long-term projects,
+with some additional work required;
 https://github.com/NCBI-Hackathons/Semantic-search-log-analysis-pipeline.
 
-If you're using Google Search Console data, you can probably use the site area
-where the person landed to help you classify the terms.
+If you're using Google Search Console data, you could use site-area data,
+where the person landed, to help you classify the terms. Some terms could use
+this extra context.
 '''
 
 # write out
@@ -675,8 +663,6 @@ writer = pd.ExcelWriter(dataInterim + 'UnmatchedAfterPastMatches.xlsx')
 UnmatchedAfterPastMatches.to_excel(writer,'UnmatchedAfterPastMatches', index=False)
 # df2.to_excel(writer,'Sheet2')
 writer.save()
-
-
 
 
 #%%
@@ -724,8 +710,9 @@ LogAfterUmlsMesh.columns
        'SemanticType_y', 'ui_y', 'LAT', 'SAB'
 '''
 
-# Future: Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE. 
-# Temporary fix: Move _y into _x if _x is empty; or here: where _x has content, use _x, otherwise use _y
+# TODO - Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE.
+# This code stops the merge from wiping out some data. Temporary fix:
+# Move _y into _x if _x is empty; or here: where _x has content, use _x, otherwise use _y
 LogAfterUmlsMesh['AdjustedQueryTerm2'] = LogAfterUmlsMesh['AdjustedQueryTerm_x'].where(LogAfterUmlsMesh['AdjustedQueryTerm_x'].notnull(), LogAfterUmlsMesh['AdjustedQueryTerm_y'])
 LogAfterUmlsMesh['AdjustedQueryTerm2'] = LogAfterUmlsMesh['AdjustedQueryTerm_y'].where(LogAfterUmlsMesh['AdjustedQueryTerm_y'].notnull(), LogAfterUmlsMesh['AdjustedQueryTerm_x'])
 LogAfterUmlsMesh['TotalSearchFreq2'] = LogAfterUmlsMesh['TotalSearchFreq_x'].where(LogAfterUmlsMesh['TotalSearchFreq_x'].notnull(), LogAfterUmlsMesh['TotalSearchFreq_y'])
@@ -757,7 +744,8 @@ LogAfterUmlsMesh.drop(['Search Query', 'LAT', 'SAB'], axis=1, inplace=True)
 LogAfterUmlsMesh = LogAfterUmlsMesh[['AdjustedQueryTerm', 'PreferredTerm', 'SemanticType', 'TotalSearchFreq', 'ui','Query']]
 
 # Separate next operations so previous matches won't be overwritten
-UnmatchedAfterUmlsMesh = LogAfterUmlsMesh.loc[LogAfterUmlsMesh['SemanticType'] == '']
+UnmatchedAfterUmlsMesh = LogAfterUmlsMesh[LogAfterUmlsMesh['SemanticType'].isnull()]
+# UnmatchedAfterUmlsMesh = LogAfterUmlsMesh.loc[LogAfterUmlsMesh['SemanticType'] == '']
 UnmatchedAfterUmlsMesh = UnmatchedAfterUmlsMesh[['AdjustedQueryTerm', 'TotalSearchFreq']].reset_index(drop=True)
 # UnmatchedAfterUmlsMesh.rename(columns={'AdjustedQueryTerm': 'Search Query'}, inplace=True)
 
@@ -768,27 +756,58 @@ UnmatchedAfterUmlsMesh = UnmatchedAfterUmlsMesh[['AdjustedQueryTerm', 'TotalSear
 
 # Total queries in log
 SearchesRepresentedTot = LogAfterUmlsMesh['TotalSearchFreq'].sum().astype(int)
-SearchesAssignedTot = LogAfterUmlsMesh.loc[LogAfterUmlsMesh['SemanticType'] != '']
+SearchesAssignedTot = LogAfterUmlsMesh[LogAfterUmlsMesh['SemanticType'].notnull()]
+# SearchesAssignedTot = LogAfterUmlsMesh.loc[LogAfterUmlsMesh['SemanticType'] != '']
 SearchesAssignedTot = SearchesAssignedTot['TotalSearchFreq'].sum().astype(int)
 SearchesAssignedPercent = (SearchesAssignedTot / SearchesRepresentedTot * 100).astype(int)
 # PercentOfSearchesUnAssigned = 100 - PercentOfSearchesAssigned
 RowsTot = len(LogAfterUmlsMesh)
-RowsAssignedCnt = (LogAfterUmlsMesh['SemanticType'].values != '').sum() # .isnull().sum()
+RowsAssignedCnt = (LogAfterUmlsMesh['SemanticType'].notnull().sum())
+# RowsAssignedCnt = (LogAfterUmlsMesh['SemanticType'].values != '').sum() # .isnull().sum()
 # RowsUnassignedCnt = TotRows - RowsAssigned
 RowsAssignedPercent = (RowsAssignedCnt / RowsTot * 100).astype(int)
 
 # print("\nTop Semantic Types\n{}".format(LogAfterUmlsMesh['SemanticType'].value_counts().head(10)))
-print("\n===========================================================\n ** LogAfterUmlsMesh: {}% of total search volume tagged **\n===========================================================\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned\nNOTE: Join creates additional rows (?).".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
+print("\n===========================================================\n ** LogAfterUmlsMesh: {}% of total search volume tagged **\n===========================================================\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned\nNOTE: Join creates additional rows when match files have dupes;\nfix with procedures in src/data/update_MatchFiles.py.".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
 
 
 # Free up some memory
 del [[LogAfterPastMatches, UmlsMesh, UmlsMeshMatches, UnmatchedAfterPastMatches]]
 
 
-# Somehow rows are being added over time. What is getting duplicated?
-# https://stackoverflow.com/questions/14657241/how-do-i-get-a-list-of-all-the-duplicate-items-using-pandas-in-python
-# Fix later, after re-joining to original log so you can tell the diff between google.com and site searches.
-dupeCheck = pd.concat(g for _, g in LogAfterUmlsMesh.groupby("Query") if len(g) > 1)
+# ---------------------------------------------------------
+# Interlude - Duplication or the appearance of duplication
+# ---------------------------------------------------------
+
+'''
+TO-DO - Consider how to avoid duplication and the appearance of duplication,
+regarding AdjustedQueryTerm, which may be confusing to users of the reporting.
+
+Sometimes the df row count grows. What is getting duplicated? This can happen
+if PastMatches and SiteSpecificMatches contain dupes. 
+
+However, there is a separate problem, where entries look like dupes but there 
+have been no new rows created. Removing punctuation from AdjustedQueryTerm can 
+create duplicate entries in AdjustedQueryTerm, by making entries like these the same: 
+    action-research
+    action research
+    "action-research"
+    "action research"
+
+Should multiple rows be collapsed into one unique AdjustedQueryTerm row? Maybe not, as 
+that would make the columns calculated within GA, less useful. If we end up using them.
+https://stackoverflow.com/questions/14657241/how-do-i-get-a-list-of-all-the-duplicate-items-using-pandas-in-python
+Fix later, after re-joining to original log so you can tell the diff between google.com and site searches.
+'''
+dupeCheck = pd.concat(g for _, g in LogAfterUmlsMesh.groupby("AdjustedQueryTerm") if len(g) > 1)
+dupeCheck = dupeCheck.sort_values(by='AdjustedQueryTerm', ascending=True).reset_index(drop=True)
+dupeCheck.columns
+'''
+'AdjustedQueryTerm', 'PreferredTerm', 'SemanticType',
+       'TotalSearchFreq', 'ui', 'Query'
+'''
+
+dupeCheck = dupeCheck[['AdjustedQueryTerm', 'Query', 'TotalSearchFreq']]
 
 
 #%%
@@ -796,8 +815,10 @@ dupeCheck = pd.concat(g for _, g in LogAfterUmlsMesh.groupby("Query") if len(g) 
 # 9. Exact match to journal file (necessary for pilot site)
 # ==========================================================
 '''
-Necessary on the pilot site; other sites probably do not need. Okay for this 
-one to overwrite "Numeric ID" rows.
+Necessary on the pilot site; other sites probably do not need. Perhaps you have
+something similar that can be handled in a similar way.
+
+This is configured so it can overwrite "Numeric ID" rows.
 '''
 
 JournalMatches = pd.read_csv(dataMatchFiles + 'JournalMatches.txt', sep='|') # , index_col=False, skiprows=7, 
@@ -815,8 +836,9 @@ LogAfterJournals.columns
        'ui_y'
 '''
 
-# Future: Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE. 
-# Temporary fix: Move _y into _x if _x is empty; or here: where _x has content, use _x, otherwise use _y
+# TODO - Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE.
+# This code stops the merge from wiping out some data. Temporary fix:
+# Move _y into _x if _x is empty; or here: where _x has content, use _x, otherwise use _y
 LogAfterJournals['ui2'] = LogAfterJournals['ui_x'].where(LogAfterJournals['ui_x'].notnull(), LogAfterJournals['ui_y'])
 LogAfterJournals['ui2'] = LogAfterJournals['ui_y'].where(LogAfterJournals['ui_y'].notnull(), LogAfterJournals['ui_x'])
 LogAfterJournals['PreferredTerm2'] = LogAfterJournals['PreferredTerm_x'].where(LogAfterJournals['PreferredTerm_x'].notnull(), LogAfterJournals['PreferredTerm_y'])
@@ -835,23 +857,8 @@ LogAfterJournals.columns
        'SemanticType'
 '''
 
-
-# Write out LogAfterJournals
-writer = pd.ExcelWriter(dataInterim + 'LogAfterJournals.xlsx')
-LogAfterJournals.to_excel(writer,'LogAfterJournals', index=False)
-# df2.to_excel(writer,'Sheet2')
-writer.save()
-
-
-# Separate next operations so previous matches won't be overwritten
-UnmatchedAfterJournals = LogAfterJournals.loc[LogAfterJournals['SemanticType'] == '']
-UnmatchedAfterJournals = UnmatchedAfterJournals[['AdjustedQueryTerm', 'TotalSearchFreq']].reset_index(drop=True)
-
-# Write out
-writer = pd.ExcelWriter(dataInterim + 'UnmatchedAfterJournals.xlsx')
-UnmatchedAfterJournals.to_excel(writer,'UnmatchedAfterJournals', index=False)
-# df2.to_excel(writer,'Sheet2')
-writer.save()
+# We are ready to write out, but the next procedures are recommended to build 
+# your match files. We will write results after steps 10 and 11.
 
 
 # -------------
@@ -860,17 +867,25 @@ writer.save()
 
 # Total queries in log
 SearchesRepresentedTot = LogAfterJournals['TotalSearchFreq'].sum().astype(int)
-SearchesAssignedTot = LogAfterJournals.loc[LogAfterJournals['SemanticType'] != '']
+SearchesAssignedTot = LogAfterJournals[LogAfterJournals['SemanticType'].notnull()]
+# SearchesAssignedTot = LogAfterJournals.loc[LogAfterJournals['SemanticType'] != '']
 SearchesAssignedTot = SearchesAssignedTot['TotalSearchFreq'].sum().astype(int)
 SearchesAssignedPercent = (SearchesAssignedTot / SearchesRepresentedTot * 100).astype(int)
 # PercentOfSearchesUnAssigned = 100 - PercentOfSearchesAssigned
 RowsTot = len(LogAfterJournals)
-RowsAssignedCnt = (LogAfterJournals['SemanticType'].values != '').sum() # .isnull().sum()
+RowsAssignedCnt = (LogAfterJournals['SemanticType'].notnull().sum())
+# RowsAssignedCnt = (LogAfterJournals['SemanticType'].values != '').sum() # .notnull().sum()
 # RowsUnassignedCnt = TotRows - RowsAssigned
 RowsAssignedPercent = (RowsAssignedCnt / RowsTot * 100).astype(int)
 
+
 # print("\nTop Semantic Types\n{}".format(LogAfterJournals['SemanticType'].value_counts().head(10)))
 print("\n===========================================================\n ** LogAfterJournals: {}% of total search volume tagged **\n===========================================================\n\n{:,} of {:,} searches ({}%) assigned;\n{:,} of {:,} rows ({}%) assigned".format(SearchesAssignedPercent, SearchesAssignedTot, SearchesRepresentedTot, SearchesAssignedPercent, RowsAssignedCnt, RowsTot, RowsAssignedPercent))
+
+# Separate next operations so previous matches won't be overwritten
+# UnmatchedAfterJournals = LogAfterJournals.loc[LogAfterJournals['SemanticType'] == '']
+UnmatchedAfterJournals = LogAfterJournals[LogAfterJournals['SemanticType'].isnull()]
+UnmatchedAfterJournals = UnmatchedAfterJournals[['AdjustedQueryTerm', 'TotalSearchFreq']].reset_index(drop=True)
 
 
 # Free up some memory
@@ -878,18 +893,28 @@ del [[JournalMatches, LogAfterUmlsMesh, PastMatches, UnmatchedAfterUmlsMesh]]
 
 
 #%%
-
+# ========================================================================
+# 10. MANUAL PROCESS: Re-cluster, update SiteSpecificMatches.xlsx, re-run
+# ========================================================================
 '''
-Might be useful to run 00_StartUp-SiteSpecificTerms (clustering by lexical 
-similarity) over and over at this point, moving product info into 
-SiteSpecificMatches and the product area above. UNTIL your results are 
-overwhelmed by non-product data. Balance your time between classifying your 
-product-terminology searches, but also making sure that high-frequency 
-unmatched terms (top rows of UnmatchedAfterJournals) are classified -- 
-most of which are NOT visible through clustering; see below.
+Might be useful to run part of the code (below) from 00_StartUp-SiteSpecificTerms 
+(clustering by lexical similarity) over and over at this point, moving product 
+info...
+    FROM data/matchFiles/ClusterResults.xlsx
+    INTO data/matchFiles/SiteSpecificMatches.xlsx 
 
+UNTIL your clusters are overwhelmed by non-product data. Balance your time 
+between classifying your product-terminology searches, but also making sure 
+that high-frequency unmatched terms (top rows of UnmatchedAfterJournals) are 
+classified -- most of which are NOT visible through clustering; see below.
+
+When you update the match files from ClusterResults, (SiteSpecificMatches.xlsx
+and PastMatches.xlsx...), re-run those parts of src/data/update_MatchFiles.py, 
+to clean the text, remove dupes, re-sort, etc.
+
+SMALL BUCKETS = PRECISION IS GOOD BUT REQUIRES ITERATION.
+LARGE BUCKETS = PRECISION IS NOT VERY GOOD.
 '''
-
 
 
 query_df = UnmatchedAfterJournals
@@ -997,34 +1022,93 @@ clusterResults.to_excel(writer,'clusterResults', index=False)
 # df2.to_excel(writer,'Sheet2')
 writer.save()
 
+print("\n\n====================================================================\n ** Recommendation **\nStop here, copy/build from FROM data/matchFiles/ClusterResults.xlsx\nINTO data/matchFiles/SiteSpecificMatches.xlsx and re-run script.\n====================================================================\n")
+
 
 #%%
-# ==========================================================
-# 10. Manually add matches for UnmatchedAfterJournals
-# ==========================================================
+# ===============================================================================
+# 11. MANUALLY add matches from ManualMatch.xlsx for high-frequency unclassified
+# ===============================================================================
 '''
-The overall goal is to tag 80 percent of your queries; this procedure allows
-you to focus on the top unmatched terms after your clustering work becomes 
-less useful.
+The overall goal is to tag the top 80 percent of your queries by frequency.
+This procedure attempts to boost your percentage by helping you manually match
+a SMALL NUMBER of HIGH-FREQUENCY searches. This step will become less needed 
+if you add machine learning procedures; however, machine learning requires
+that you build accurate training data for your site.
 
-Here, tag some rows manually - high frequency terms that are NOT single-concept 
-generic terms - usually a mix between product terminology, non-organization
-resources, etc. Add results to SiteSpecificMatches if they are specific to 
-your site, or to PastMatches if they are not.
+Use this procedure after your clustering work becomes less useful.
 
 ONLY focus on the small number of high-frequency terms at the top of the 
-"unmatched" file. Over time, this is one way you will learn what new concepts are 
-trending upward.
+"unmatched" file. Over time, this is one way you will learn what new concepts 
+are trending upward.
 
-Resources for this work: 
-    data/matchFiles/SemanticNetworkReference.xlsx
-    Searches at https://ii-public1.nlm.nih.gov/metamaplite/rest; get [aggp] etc., the Sem Type abbrev
-    https://www.nlm.nih.gov/research/umls/META3_current_semantic_types.html
-    Search engines might tell you what bigger entity the terminology belongs to
+If you are a UMLS license holder, you can worry less about the single-concept 
+generic terms - they are covered in the next step. 
+
+1. Run the procedure below, then open 3 files:
+    - data/interim/ManualMatch.xlsx - the file created here
+    - data/matchFiles/SiteSpecificMatches.xlsx
+    - data/matchFiles/PastMatches.xlsx
+    - data/matchFiles/SemanticNetworkReference.xlsx (for SemanticType abbreviations)
+2. Search for possible matches 
+    - Example: stubborn fat    
+        - Search at https://ii-public1.nlm.nih.gov/metamaplite/rest
+        - No need to change any form options, just put in a term, add hard return
+            between subject concepts, submit to get results
+        - Example: a search for stubborn fat yields:
+            C0424612: fat: Obese build : [orga]: [MTH, CHV, SNOMEDCT_US, DXP]: 9 : 3 : 0.0
+            C1708004: fat: FAT wt Allele : [gngm]: [MTH, NCI]: 9 : 3 : 0.0
+            C3887682: fat: Platelet Glycoprotein 4, human : [rcpt, aapp]: [MTH, NCI]: 9 : 3 : 0.0
+            - While there is no perfect match, it seems that the first option is the best. 
+            This not specific to our site so I will create a new row for it in PastMatches.xlsx:
+                PreferredTerm: Obese build
+                SemanticType: the [orga] abbreviation in SemanticNetworkReference.xlsx shows "Organism Attribute"
+                    so into SemanticType in PastMatches I paste Organism Attribute
+                ui: I paste C0424612
+     - Example: entomology worksheet
+         - The web site has downloadable worksheets for teachers and students. 
+             This is an entry for SiteSpecificMatches.xlsx
+        - By using site search I locate the product this is part of, and tag it for the product.
+    - Example: nomophobia
+        - Not in MetaMap Lite or my website. A google.com search indicates it has
+        been published as a "fear of being without a mobile device, or beyond mobile phone contact."
+        I will tag this in PastMatches based on what MetaMap Lite has for phobia and mobile devices.
+        When a term matches more than one type, use one row and separate the data with | (pipe)
+            C0349231: phobia: Phobic anxiety disorder : [mobd]: [MTH, CSP, ICD10CM, MSH, NLMSubSyn, CST, OMIM, COSTAR, NCI_NCI-GLOSS, CHV, SNMI, SNM, MEDLINEPLUS, LCH_NW, NCI, AOD, QMR, ICD9CM, NDFRT, SNOMEDCT_US, DXP, MTHICD9]: 0 : 6 : 0.0
+            C1136360: mobile phone: Mobile Phone : [mnob]: [CHV, MSH, NLMSubSyn, NCI]: 0 : 12 : 0.0
+            Therefore:
+                PreferredTerm: Phobic anxiety disorder|Mobile Phone
+                SemanticType: Mental or Behavioral Dysfunction|Manufactured Object
+                ui: C0349231|C1136360
+            (These types of entries are subject to future revision; for now 
+                 we have captured something that is new on the horizon.)
+    - Example: drain
+        - Some queries can be marked Unresolved or you can speculate.
+            C0013103: drain: Drainage procedure : [topp]: [MTH, CHV, LCH, LNC, SNMI, MSH, NLMSubSyn, NCI, SNOMEDCT_US, NCI_NCI-GLOSS]: 0 : 5 : 0.0
+            C0180499: drain: Drain device : [medd]: [MTH, CHV, LNC, SNMI, SNOMEDCT_US, VANDF]: 0 : 5 : 0.0
+            The pilot project marks these as unresolved, thinking that someone can review all 
+            unresolved, perhaps reviewing other queries within the same session. If your site
+            focuses on hardware, perhaps it's the device. Here:
+                PreferredTerm: Unresolved
+                SemanticType: Unresolved
+                ui: (empty)
+4. Do what you have time for, on terms that can boost your percentage tagged.
+The pilot project attempts to classify everything searched more than an average of 
+once per day / 30 per month.
+5. After the files are updated, re-run the whole script.
+
+Search engines can help you understand what bigger entity a term belongs to. If you 
+search for a word that turns out to be a commercial device, you can put "device"
+into MetaMap Lite, to resolve the entry.
+
+Repeating: If you are a UMLS license holder, you can worry less about the single-concept 
+generic terms - they are covered in the next step.
 '''
 
+# Adjust frequency based on your goal and how much time you have
 ManualMatch = UnmatchedAfterJournals.loc[(UnmatchedAfterJournals['TotalSearchFreq'] > 15)]
 
+ManualMatch = ManualMatch.copy() # following line was generating 'copy of a slice' warning
 ManualMatch['PreferredTerm'] = ''
 ManualMatch['SemanticType'] = ''
 
@@ -1036,8 +1120,33 @@ ManualMatch.to_excel(writer,'ManualMatch', index=False)
 writer.save()
 
 
-#%%
+# Report out
+print("\n\n==================================================================\n** Script 01 done ** With {}% of total search volume tagged.\nOpen data/matchFiles/ManualMatch.xlsx if you wish to update\nSiteSpecificMatches and PastMatches. In that case, update the\nXLSX files, then run update_MatchFiles.py, then run this script\nagain.\n==================================================================\n".format(SearchesAssignedPercent))
 
+
+#%%
+# ==========================================================
+# 12. Write out LogAfterJournals and UnmatchedAfterJournals
+# ==========================================================
+
+# Write out LogAfterJournals
+writer = pd.ExcelWriter(dataInterim + 'LogAfterJournals.xlsx')
+LogAfterJournals.to_excel(writer,'LogAfterJournals', index=False)
+# df2.to_excel(writer,'Sheet2')
+writer.save()
+
+
+# Write out
+writer = pd.ExcelWriter(dataInterim + 'UnmatchedAfterJournals.xlsx')
+UnmatchedAfterJournals.to_excel(writer,'UnmatchedAfterJournals', index=False)
+# df2.to_excel(writer,'Sheet2')
+writer.save()
+
+
+#%%
+# ==========================================================
+# 13. Optional / contingencies
+# ==========================================================
 """
 # -------------------------------
 # How we doin? Visualize results
@@ -1207,7 +1316,9 @@ LogAfterPastMatches.columns
 'PreferredTerm_y', 'ui_y'
 '''
 
-# Future: Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE. Temporary fix:
+# TODO - Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE.
+# This code stops the merge from wiping out some data. Temporary fix:
+# Move _y into _x if _x is empty; or here: where _x has content, use _x, otherwise use _y
 LogAfterPastMatches['ui2'] = LogAfterPastMatches['ui_x'].where(LogAfterPastMatches['ui_x'].notnull(), LogAfterPastMatches['ui_y'])
 LogAfterPastMatches['ui2'] = LogAfterPastMatches['ui_y'].where(LogAfterPastMatches['ui_y'].notnull(), LogAfterPastMatches['ui_x'])
 LogAfterPastMatches['PreferredTerm2'] = LogAfterPastMatches['PreferredTerm_x'].where(LogAfterPastMatches['PreferredTerm_x'].notnull(), LogAfterPastMatches['PreferredTerm_y'])
