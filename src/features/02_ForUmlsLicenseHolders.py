@@ -3,49 +3,61 @@
 """
 Created on Thu Jun 28 15:33:33 2018
 
-@authors: dan.wendling@nih.gov
+@authors: Dan Wendling
 
-Last modified: 2019-11-24
+Last modified: 2020-02-19
 
----------------------------------------------------
- ** Semantic Search Analysis: Metathesaurus API **
----------------------------------------------------
+---------------------------------------------------------------------------
+ ** Semantic Search Analysis: Metathesaurus API, customized local files **
+---------------------------------------------------------------------------
 
  - For UMLS license holders -
  
-This script: Run unmatched search queries against the UMLS Metathesaurus https
-API, which has many vocabularies and a lexical toolset specific to biomedicine. 
-This script uses normalized string matching, which is conservative enough to 
-assume that almost all the matches returned, are correct. Some clean-up will 
-be needed later in your PastMatches file.
+This script: You can skip this step if you don't have a (free) UMLS license 
+and don't want to get one now. This step can be integrated later if you find 
+you aren't satisfied with the percentage of search volume you are able to 
+tag. The pilot project aimed for tagging 80 percent of total search volume, 
+but only reached ~75 percent, INCLUDING with this step.
 
-You can skip this step if you don't have a (free) UMLS license and don't 
-want to get one now. This step can be integrated later if you find you 
-aren't satisfied with the percentage of search volume you are able to tag 
-(the pilot project aimed for 80 percent).
+This script runs unmatched search queries against the UMLS Metathesaurus 
+https API, which has many vocabularies and a lexical toolset specific to 
+biomedicine. This script uses normalized string matching, which is 
+conservative enough to assume that almost all the matches returned, are 
+correct. Some clean-up will be needed later in your PastMatches file.
 
-
+INPUTS:
+    - data/interim/LogAfterJournals.xlsx
+    - data/interim/UnmatchedAfterJournals.xlsx
+    - data/matchFiles/LicensedData/umlsTermListForeign.csv
+    - data/matchFiles/PastMatches.xlsx
+    - data/interim/ApiNormalizedString1.xlsx
+    
+OUTPUTS:
+    - data/matchFiles/PastMatches.xlsx (add terms from foreign-term-file matching)
+    - data/interim/ApiNormalizedString1.xlsx
+    - data/interim/LogAfterMetathesaurus.xlsx
+    - data/interim/UnmatchedAfterMetathesaurus.xlsx
+    - data/matchFiles/PastMatches.xlsx (add terms from API matching)
+    
+    
 ----------------
 SCRIPT CONTENTS
 ----------------
 
-1. Start-up
+1. Start-up / What to put into place, where
 2. Match to foreign terms list
-3. Set an appropriate dataset size for API, and run
-4. Integrate Metathesaurus data
+3. Match to UMLS Metathesaurus API
+4. Integrate Metathesaurus data, 'AfterMetathesaurus'
 5. Append new API results to PastMatches
-
+6. Options / contingencies
 """
+
 
 
 #%%
 # ============================================
 # 1. Start-up / What to put into place, where
 # ============================================
-'''
-# Re-starting?
-UnmatchedAfterJournals = pd.read_excel('01_Import-transform_files/UnmatchedAfterJournals.xlsx')
-'''
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -61,11 +73,12 @@ from lxml.html import fromstring
 import numpy as np
 # import time
 
+from pathlib import *
+# To be used with str(Path.home())
 
-# Set working directory, read/write locations
-# CHANGE AS NEEDED
-envHome = (os.environ['HOME'])
-os.chdir(envHome + '/Projects/classifysearches')
+# Set working directory and directories for read/write
+home_folder = str(Path.home()) # os.path.expanduser('~')
+os.chdir(home_folder + '/Projects/classifysearches')
 
 dataMatchFiles = 'data/matchFiles/' # Permanent helper files; both reading and writing required
 dataInterim = 'data/interim/' # Save to disk as desired, to re-start easily
@@ -113,9 +126,9 @@ semUri = "https://uts-ws.nlm.nih.gov/rest/content/current/CUI/"
 
 
 #%%
-# ===================================
-# 2. Match to foreign terms list
-# ===================================
+# =====================================================================
+# 2. Match to foreign terms list, LicensedData/umlsTermListForeign.csv
+# =====================================================================
 '''
 The foreign vocab file is created with the script src/data/build_FullUmls_file.py.
 
@@ -166,8 +179,9 @@ LogAfterForeign.columns
        'SemanticType_y'
 '''
 
-# Future: Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE. 
-# Temporary fix: Move _y into _x if _x is empty; or here: where _x has content, use _x, otherwise use _y
+# TODO - Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE.
+# This code stops the merge from wiping out some data. Temporary fix:
+# Move _y into _x if _x is empty; or here: where _x has content, use _x, otherwise use _y
 LogAfterForeign['ui2'] = LogAfterForeign['ui_x'].where(LogAfterForeign['ui_x'].notnull(), LogAfterForeign['ui_y'])
 LogAfterForeign['ui2'] = LogAfterForeign['ui_y'].where(LogAfterForeign['ui_y'].notnull(), LogAfterForeign['ui_x'])
 LogAfterForeign['PreferredTerm2'] = LogAfterForeign['PreferredTerm_x'].where(LogAfterForeign['PreferredTerm_x'].notnull(), LogAfterForeign['PreferredTerm_y'])
@@ -233,13 +247,16 @@ writer.save()
 
 # Total queries in log
 SearchesRepresentedTot = LogAfterForeign['TotalSearchFreq'].sum().astype(int)
+# SearchesAssignedTot = LogAfterForeign[LogAfterForeign['SemanticType'].notnull()]
 SearchesAssignedTot = LogAfterForeign.loc[LogAfterForeign['SemanticType'] != '']
 SearchesAssignedTot = SearchesAssignedTot['TotalSearchFreq'].sum().astype(int)
 SearchesAssignedPercent = (SearchesAssignedTot / SearchesRepresentedTot * 100).astype(int)
 # PercentOfSearchesUnAssigned = 100 - PercentOfSearchesAssigned
 RowsTot = len(LogAfterForeign)
-RowsAssignedCnt = (LogAfterForeign['SemanticType'].values != '').sum() # .isnull().sum()
-# RowsUnassignedCnt = TotRows - RowsAssigned
+# RowsAssignedCnt = (LogAfterForeign['SemanticType'].notnull().sum())
+RowsAssignedCnt = (LogAfterForeign['SemanticType'].values != '').sum() # .notnull().sum()
+
+RowsUnassignedCnt = RowsTot - RowsAssignedCnt
 RowsAssignedPercent = (RowsAssignedCnt / RowsTot * 100).astype(int)
 
 # print("\nTop Semantic Types\n{}".format(LogAfterForeign['SemanticType'].value_counts().head(10)))
@@ -248,13 +265,13 @@ print("\n===========================================================\n ** LogAft
 
 
 # searchLog
-del [[LogAfterJournals, UnmatchedAfterJournals, foreignUmlsMatches]]
+del [[LogAfterJournals, UnmatchedAfterJournals, foreignUmlsMatches, umlsTermListForeign]]
 
 
 
 #%%
 # ===============================================
-# 3. Set an appropriate dataset size for API run
+# 3. Match to UMLS Metathesaurus API
 # ===============================================
 '''
 In this run the API calls use the Normalized String setting. Example:
@@ -281,18 +298,22 @@ writer.save()
 
 '''
 
-
-
 # -------------------------------------------
-# Batch rows if you want to do separate runs
-# Arbitrary max of 5,000 rows per run...
+# Set an appropriate dataset size for API run
 # -------------------------------------------
+'''
+Not really worth your time or worth hitting the resource to check EVERY term. 
+Low frequency searches are often unmatchable, and often are so quirky that you 
+can't tell what they mean, anyway. May not be worth matching.
 
-# listToCheck1 = UnmatchedAfterJournals[UnmatchedAfterJournals.timesSearched >= 3]
+Also, you can batch rows into separate runs so you can check the utility after 
+each. I had been running small batches and checking them and using a max of 
+10,000 rows per run; but lately I have been searching by the frequency.
+'''
+
+listToCheck1 = UnmatchedAfterForeign[UnmatchedAfterForeign.TotalSearchFreq >= 3]
 
 # listToCheck1 = UnmatchedAfterJournals
-
-listToCheck1 = LogAfterForeign.iloc[0:7400]
 
 '''
 listToCheck1 = UnmatchedAfterJournals.iloc[0:10000]
@@ -318,12 +339,17 @@ listToCheck3 = pd.read_excel(dataInterim + 'listToCheck3.xlsx')
 # ----------------------------------------------------------
 # Run this block after changing listToCheck top and bottom
 # ----------------------------------------------------------
+'''
+See below for an API output example.
+RECOMMEND THAT YOU KEEP TOTAL REQUESTS LOWER THAN 20 PER SECOND. Pilot project
+has run slower than that.
+'''
 
 # Create df
 apiGetNormalizedString = pd.DataFrame()
 apiGetNormalizedString['AdjustedQueryTerm'] = ""
 apiGetNormalizedString['ui'] = ""
-apiGetNormalizedString['preferredTerm'] = ""
+apiGetNormalizedString['PreferredTerm'] = ""
 apiGetNormalizedString['SemanticType'] = list()
 
 for index, row in listToCheck1.iterrows():
@@ -358,14 +384,17 @@ for index, row in listToCheck1.iterrows():
         # time.sleep(.06)
     else:
        # Post "NONE" to database and restart loop
-        apiGetNormalizedString = apiGetNormalizedString.append(pd.DataFrame({'AdjustedQueryTerm': currLogTerm, 'preferredTerm': "NONE"}, index=[0]), ignore_index=True)
+        # apiGetNormalizedString = apiGetNormalizedString.append(pd.DataFrame({'AdjustedQueryTerm': currLogTerm, 'PreferredTerm': "NONE"}, index=[0]), ignore_index=True)
         print('{} --> NONE'.format(currLogTerm, )) # Write progress to console
         # time.sleep(.06)
 print ("* Done *")
 
-# Experiment - Convert to one concept per row, with multiple SemanticType separated with pipe
-# This makes joins easier, but adds step to later counting. What works best?
-apiGetNormalizedString = apiGetNormalizedString.groupby(['ui','AdjustedQueryTerm', 'preferredTerm'])['SemanticType'].apply('|'.join).reset_index()
+
+# FIXME - Add conditional to handle zero results
+
+
+# Like the rest of the matching, we want one concept per row, with multiple SemanticType separated with pipe |
+apiGetNormalizedString = apiGetNormalizedString.groupby(['ui','AdjustedQueryTerm', 'PreferredTerm'])['SemanticType'].apply('|'.join).reset_index()
 
 # Save
 writer = pd.ExcelWriter(dataInterim + 'ApiNormalizedString1.xlsx')
@@ -374,19 +403,47 @@ apiGetNormalizedString.to_excel(writer,'ApiNormalizedString', index=False)
 writer.save()
 
 
-#%%
-# ===========================================
-# 3. Integrate Metathesaurus data
-# ===========================================
+'''
+EXAMPLE OF OUTPUT: for request for pubmed within the free MeSH vocabulary:
 
-LogAfterJournals = pd.read_excel(dataInterim + 'LogAfterJournals.xlsx')
-LogAfterJournals.columns
+{
+    "pageSize": 25,
+    "pageNumber": 1,
+    "result": {
+        "classType": "searchResults",
+        "results": [
+            {
+                "ui": "C1138432",
+                "rootSource": "MSH",
+                "uri": "https://uts-ws.nlm.nih.gov/rest/content/2019AB/CUI/C1138432",
+                "name": "PubMed"
+            }
+        ]
+    }
+}
+
+'''
+
+
+#%%
+# ======================================================
+# 4. Integrate Metathesaurus data, 'AfterMetathesaurus'
+# ======================================================
+'''
+Creates two files: 
+    - LogAfterMetathesaurus.xlsx
+    - UnmatchedAfterMetathesaurus.xlsx
+'''
+
+
+# LogAfterJournals = pd.read_excel(dataInterim + 'LogAfterJournals.xlsx')
+# LogAfterJournals.columns
 
 # apiGetNormalizedString.rename(columns={'preferredTerm': 'PreferredTerm'}, inplace=True)
 
 
 # Join to full list
-LogAfterMetathesaurus = pd.merge(LogAfterJournals, apiGetNormalizedString, how='left', left_on=['AdjustedQueryTerm'], right_on=['AdjustedQueryTerm'])
+LogAfterMetathesaurus = pd.merge(LogAfterForeign, apiGetNormalizedString, how='left', left_on=['AdjustedQueryTerm'], right_on=['AdjustedQueryTerm'])
 LogAfterMetathesaurus.columns
 '''
 'AdjustedQueryTerm', 'TotalSearchFreq', 'Query', 'ui_x',
@@ -394,8 +451,9 @@ LogAfterMetathesaurus.columns
        'SemanticType_y'
 '''
 
-# Future: Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE. 
-# Temporary fix: Move _y into _x if _x is empty; or here: where _x has content, use _x, otherwise use _y
+# TODO - Look for a better way to do the above - MERGE WITH CONDITIONAL OVERWRITE.
+# This code stops the merge from wiping out some data. Temporary fix:
+# Move _y into _x if _x is empty; or here: where _x has content, use _x, otherwise use _y
 LogAfterMetathesaurus['ui2'] = LogAfterMetathesaurus['ui_x'].where(LogAfterMetathesaurus['ui_x'].notnull(), LogAfterMetathesaurus['ui_y'])
 LogAfterMetathesaurus['ui2'] = LogAfterMetathesaurus['ui_y'].where(LogAfterMetathesaurus['ui_y'].notnull(), LogAfterMetathesaurus['ui_x'])
 LogAfterMetathesaurus['PreferredTerm2'] = LogAfterMetathesaurus['PreferredTerm_x'].where(LogAfterMetathesaurus['PreferredTerm_x'].notnull(), LogAfterMetathesaurus['PreferredTerm_y'])
@@ -414,7 +472,7 @@ LogAfterMetathesaurus.columns
        'SemanticType'
 '''
 
-# Write outLogAfterMetathesaurus
+# Write out LogAfterMetathesaurus
 writer = pd.ExcelWriter(dataInterim + 'LogAfterMetathesaurus.xlsx')
 LogAfterMetathesaurus.to_excel(writer,'LogAfterMetathesaurus', index=False)
 # df2.to_excel(writer,'Sheet2')
@@ -452,12 +510,12 @@ print("\n================================================================\n ** L
 
 
 # Free up some memory
-del [[LogAfterJournals, UnmatchedAfterJournals, listToCheck1]]
+del [[LogAfterForeign, UnmatchedAfterForeign, listToCheck1, apiGetNormalizedString]]
 
 
 #%%
 # ==========================================
-# 4. Append new API results to PastMatches
+# 5. Append new API results to PastMatches
 # ==========================================
 '''
 Improve future local matching and fuzzy matching.
@@ -472,17 +530,12 @@ UmlsResult = newAssignments1.append([apiGetNormalizedString]) # , sort=False
 Or if you only had one df from the API:
 '''
 
-ApiNormalizedString = pd.read_excel(dataInterim + 'ApiNormalizedString1.xlsx')
+ApiNormalizedString = pd.read_excel(dataInterim + 'ApiNormalizedString1.xlsx', index=False)
 ApiNormalizedString.columns
 '''
 'Unnamed: 0', 'ui', 'AdjustedQueryTerm', 'preferredTerm',
        'SemanticType'
 '''
-
-ApiNormalizedString.drop(['Unnamed: 0'], axis=1, inplace=True)
-
-ApiNormalizedString.rename(columns={'preferredTerm': 'PreferredTerm'}, inplace=True)
-
 
 # Bring in file containing this site's historical matches
 PastMatches = pd.read_excel(dataMatchFiles + 'PastMatches.xlsx')
@@ -505,7 +558,9 @@ writer.save()
 
 
 #%%
-
+# ==========================================
+# 6. Options / contingencies
+# ==========================================
 '''
 Until you put this into a function, you need to change listToCheck#
 and apiGetNormalizedString# counts every run!
@@ -637,8 +692,8 @@ writer.save()
 """
 
 #%%
-# ==================================================================
-# 3. Combine multiple files if needed
+
+# Combine multiple files if needed
 '''
 If you ran multiple runs and need to combine parts.
 
