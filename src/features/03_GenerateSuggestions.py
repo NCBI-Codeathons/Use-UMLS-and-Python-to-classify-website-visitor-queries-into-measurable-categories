@@ -3,9 +3,9 @@
 """
 Created on Thu Oct 24 09:53:59 2019
 
-@authors: dan.wendling@nih.gov
+@authors: Dan Wendling
 
-Last modified: 2019-11-24
+Last modified: 2020-01-11
 
 ------------------------------------------------------
  ** Semantic Search Analysis: Generate suggestions **
@@ -64,10 +64,12 @@ import requests # http://python-requests.org/
 # For fuzzy matching
 from fuzzywuzzy import fuzz, process
 
-# Set working directory, read/write locations
-# CHANGE AS NEEDED
-envHome = (os.environ['HOME'])
-os.chdir(envHome + '/Projects/classifysearches')
+from pathlib import *
+# To be used with str(Path.home())
+
+# Set working directory and directories for read/write
+home_folder = str(Path.home()) # os.path.expanduser('~')
+os.chdir(home_folder + '/Projects/classifysearches')
 
 dataMatchFiles = 'data/matchFiles/' # Permanent helper files; both reading and writing required
 dataInterim = 'data/interim/' # Save to disk as desired, to re-start easily
