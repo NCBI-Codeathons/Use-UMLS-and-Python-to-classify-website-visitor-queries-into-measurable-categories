@@ -14,6 +14,7 @@ Search represents a direct expression of our customers’ intent. We should use 
 1. A web analyst could say to a product owner, "Did you know that last month, 30 percent of your home page searches were in some way about drugs? Should we take action on this? How might we **improve task completion** and **reduce time on task,** for this type of information need?
 2. We should cluster and analyze **trends we know about.** For multi-faceted topics that directly relate to our mission, we should create customized analyses to collect the disparate keywords people might search for into a single bucket. How can we create a better match between user interest and the content we manage for this topic? Where might we improve our site structure and navigation? 
 3. We should focus staff work on **new trends, as the trends emerge.** When something new starts to happen that can be matched to our mission statement, we should deploy social media posts on the new topic immediately, and start new content projects to address the emerging information need.
+4. On a longer time scale, anyone publishing to the web might want to ask, how are we preparing to **support voice search**? Understanding how people search for information will help understand how to adapt for this possible next-generation technology.
 
 
 ## Pilot project results
